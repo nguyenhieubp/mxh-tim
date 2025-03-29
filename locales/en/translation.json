@@ -1,0 +1,88 @@
+{
+  "navigation": {
+    "home": "Home",
+    "explore": "Explore",
+    "messages": "Messages",
+    "notifications": "Notifications",
+    "create": "Create",
+    "profile": "Profile",
+    "more": "More"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "darkMode": "Dark Mode",
+    "changePassword": "Change Password",
+    "updatePassword": "Update your account password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm New Password",
+    "cancel": "Cancel",
+    "save": "Change Password",
+    "on": "On",
+    "off": "Off",
+    "logout": "Logout",
+    "logoutConfirm": {
+      "title": "Confirm Logout",
+      "message": "Are you sure you want to logout?",
+      "cancel": "Cancel",
+      "confirm": "Logout"
+    }
+  },
+  "profile": {
+    "editProfile": "Edit profile",
+    "username": "Username",
+    "bio": "Bio",
+    "website": "Website",
+    "posts": "posts",
+    "followers": "followers",
+    "following": "following"
+  },
+  "post": {
+    "like": "Like",
+    "comment": "Comment",
+    "share": "Share",
+    "post": "Post",
+    "likes": "likes",
+    "reply": "Reply",
+    "replies": "replies",
+    "addComment": "Add a comment...",
+    "days": "d",
+    "imageAlt": "Post image",
+    "add_comment": "Add a comment ..."
+  },
+  "createPost": {
+    "title": "Create new post",
+    "captionPlaceholder": "Write a caption for your post...",
+    "imagePreview": "Image preview",
+    "cancel": "Cancel",
+    "post": "Share post",
+    "addImage": "Add photos",
+    "removeImage": "Remove image",
+    "dragHere": "Drag photos here",
+    "or": "or",
+    "browse": "Browse",
+    "maxImages": "Maximum 10 images",
+    "publicPost": "Anyone can see this post",
+    "privatePost": "Only you can see this post",
+    "allowComments": "Allow comments",
+    "disableComments": "Disable comments",
+    "successMessage": "Post created successfully!",
+    "errorMessage": "Failed to create post. Please try again."
+  },
+  "messages": {
+    "selectConversation": "Select a conversation to show messages",
+    "inputPlaceholder": "Type a message...",
+    "send": "Send",
+    "call": "Call",
+    "videoCall": "Video Call",
+    "defaultMessages": {
+      "greeting": "Hello!",
+      "howAreYou": "How are you?",
+      "imFine": "I'm fine, thank you!"
+    }
+  },
+  "comment": {
+    "endOfReplies": "End of replies"
+  }
+}

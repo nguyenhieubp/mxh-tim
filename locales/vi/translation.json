@@ -1,0 +1,88 @@
+{
+  "navigation": {
+    "home": "Trang chủ",
+    "explore": "Khám phá",
+    "messages": "Tin nhắn",
+    "notifications": "Thông báo",
+    "create": "Tạo mới",
+    "profile": "Hồ sơ",
+    "more": "Thêm"
+  },
+  "settings": {
+    "title": "Cài đặt",
+    "language": "Ngôn ngữ",
+    "darkMode": "Chế độ tối",
+    "changePassword": "Đổi mật khẩu",
+    "updatePassword": "Cập nhật mật khẩu tài khoản",
+    "currentPassword": "Mật khẩu hiện tại",
+    "newPassword": "Mật khẩu mới",
+    "confirmPassword": "Xác nhận mật khẩu mới",
+    "cancel": "Hủy",
+    "save": "Lưu",
+    "on": "Bật",
+    "off": "Tắt",
+    "logout": "Đăng xuất",
+    "logoutConfirm": {
+      "title": "Xác nhận đăng xuất",
+      "message": "Bạn có chắc chắn muốn đăng xuất?",
+      "cancel": "Hủy",
+      "confirm": "Đăng xuất"
+    }
+  },
+  "profile": {
+    "editProfile": "Chỉnh sửa hồ sơ",
+    "username": "Tên người dùng",
+    "bio": "Tiểu sử",
+    "website": "Trang web",
+    "posts": "bài viết",
+    "followers": "người theo dõi",
+    "following": "đang theo dõi"
+  },
+  "post": {
+    "like": "Thích",
+    "comment": "Bình luận",
+    "share": "Chia sẻ",
+    "post": "Đăng",
+    "likes": "lượt thích",
+    "reply": "Trả lời",
+    "replies": "phản hồi",
+    "addComment": "Thêm bình luận...",
+    "days": "ngày",
+    "imageAlt": "Ảnh bài viết",
+    "add_comment": "Thêm bình luận..."
+  },
+  "createPost": {
+    "title": "Tạo bài viết mới",
+    "captionPlaceholder": "Hãy viết gì đó về bài viết của bạn...",
+    "imagePreview": "Xem trước ảnh",
+    "cancel": "Hủy bỏ",
+    "post": "Chia sẻ",
+    "addImage": "Thêm ảnh",
+    "removeImage": "Xóa ảnh",
+    "dragHere": "Kéo ảnh vào đây",
+    "or": "hoặc",
+    "browse": "Chọn ảnh",
+    "maxImages": "Tối đa 10 ảnh",
+    "publicPost": "Mọi người có thể xem bài viết này",
+    "privatePost": "Chỉ một mình theo dõi mới xem được bài viết này",
+    "allowComments": "Cho phép bình luận",
+    "disableComments": "Tắt bình luận",
+    "successMessage": "Đăng bài viết thành công!",
+    "errorMessage": "Không thể đăng bài. Vui lòng thử lại."
+  },
+  "messages": {
+    "selectConversation": "Chọn một cuộc trò chuyện để hiển thị tin nhắn",
+    "inputPlaceholder": "Nhập tin nhắn...",
+    "send": "Gửi",
+    "call": "Gọi điện",
+    "videoCall": "Gọi video",
+    "defaultMessages": {
+      "greeting": "Xin chào!",
+      "howAreYou": "Bạn khỏe không?",
+      "imFine": "Tớ khỏe, cảm ơn!"
+    }
+  },
+  "comment": {
+    "endOfReplies": "Ẩn bình luận"
+  }
+}
