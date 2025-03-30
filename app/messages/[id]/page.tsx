@@ -15,9 +15,7 @@ const page = ({ params }: MessagePageProps) => {
   }
 
   return (
-    <SideBar>
-      <Messages />
-    </SideBar>
+    <Messages />
   );
 };
 

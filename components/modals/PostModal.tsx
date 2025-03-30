@@ -50,16 +50,10 @@ const PostModal: React.FC<PostModalProps> = ({
   setNumberComments,
   likes,
   handleLike,
-  isShared = false,  // Add default value
-  shareId = null,    // Add default value
-  onShareChange,     // Add this prop
+  isShared = false,
+  shareId = null,
+  onShareChange,
 }) => {
-  // Remove these local states since we're using props
-  // const [isShared, setIsShared] = React.useState(false);
-  // const [shareId, setShareId] = React.useState<string | null>(null);
-
-  // Remove the checkShareStatus useEffect since we're getting the state from props
-
   const handleShare = async () => {
     if (!userCurrent?.userId) return;
 
@@ -99,16 +93,11 @@ const PostModal: React.FC<PostModalProps> = ({
   const [comment, setComment] = React.useState("");
   const [replyingTo, setReplyingTo] = React.useState<string | null>(null);
   const [parentCommentId, setParentCommentId] = React.useState<string | null>(null);
-  const [pageReplies, setPageReplies] = React.useState(1);
   const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
   const [expandedCommentIds, setExpandedCommentIds] = React.useState<string[]>([]);
   const [currentPage, setCurrentPage] = React.useState(1);
   const hasLiked = likes?.some((like) => like.user.userId === userCurrent?.userId);
-  // const [isShared, setIsShared] = React.useState(false);
-  // const [shareId, setShareId] = React.useState<string | null>(null);
 
-
-  // Fetch comments when modal opens
   const fetchComments = React.useCallback(async (page: number) => {
     setLoading(true);
     try {
@@ -154,11 +143,8 @@ const PostModal: React.FC<PostModalProps> = ({
     setComment("");
     setReplyingTo(null);
     setParentCommentId(null);
-    // Remove this line to keep replies expanded
-    // setExpandedCommentIds([]);
-    // Remove this line to keep replies loaded
-    // setCommentReplies({});
   };
+
 
   const handleToggleReply = (commentId: string) => {
     setExpandedCommentIds(prev => {
@@ -190,9 +176,9 @@ const PostModal: React.FC<PostModalProps> = ({
   // Handle load more comments
   const handleLoadMore = () => {
     if (!loading && hasMore) {
-      const nextPage = currentPage + 1; // Tính số trang tiếp theo
-      fetchComments(nextPage); // Gọi hàm fetchComments với số trang tiếp theo
-      setCurrentPage(nextPage); // Cập nhật số trang hiện tại
+      const nextPage = currentPage + 1;
+      fetchComments(nextPage);
+      setCurrentPage(nextPage);
     }
   };
 
@@ -248,7 +234,6 @@ const PostModal: React.FC<PostModalProps> = ({
     router.push(`/profile/${userId}`);
   };
 
-  // Render component if post is not null
   if (!post) return null;
 
   return (
@@ -276,16 +261,31 @@ const PostModal: React.FC<PostModalProps> = ({
         {showNavigation && (
           <>
             <div className="absolute left-[-7rem] top-1/2 transform -translate-y-1/2">
-              <IconButton onClick={onPrev} disabled={!canPrev} className={`bg-white hover:bg-gray-100 shadow-md ${!canPrev ? "opacity-50 cursor-not-allowed" : ""}`}>
+              <IconButton sx={{
+                backgroundColor: 'white',
+                '&:hover': {
+                  backgroundColor: '#f3f4f6',
+                },
+                boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
+                padding: '8px',
+              }} onClick={onPrev} disabled={!canPrev} className={`bg-white hover:bg-gray-100 shadow-md ${!canPrev ? "opacity-50 cursor-not-allowed" : ""}`}>
                 <ArrowBackIos />
               </IconButton>
             </div>
             <div className="absolute right-[-7rem] top-1/2 transform -translate-y-1/2">
-              <IconButton onClick={onNext} disabled={!canNext} className={`bg-white hover:bg-gray-100 shadow-md ${!canNext ? "opacity-50 cursor-not-allowed" : ""}`}>
+              <IconButton sx={{
+                backgroundColor: 'white',
+                '&:hover': {
+                  backgroundColor: '#f3f4f6',
+                },
+                boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
+                padding: '8px',
+              }} onClick={onNext} disabled={!canNext} className={`bg-white hover:bg-gray-100 shadow-md ${!canNext ? "opacity-50 cursor-not-allowed" : ""}`}>
                 <ArrowForwardIos />
               </IconButton>
             </div>
           </>
+
         )}
         <div className="bg-white p-4 rounded-lg w-[80rem] h-[90vh]">
           <div className="flex gap-4 h-full w-full relative">

@@ -165,12 +165,14 @@ const ProfileHeader = ({ user }: { user: IUser | undefined }) => {
         <div className="mt-4 md:mt-0 flex-1">
           <div className="flex items-center space-x-4">
             <h2 className="text-3xl font-bold">{userData?.username}</h2>
-            <button
-              onClick={handleEditProfile}
-              className="px-4 py-1 border rounded text-sm font-semibold hover:bg-gray-100 transition-all duration-200"
-            >
-              {t("profile.editProfile")}
-            </button>
+            {isMe && (
+              <button
+                onClick={handleEditProfile}
+                className="px-4 py-1 border rounded text-sm font-semibold hover:bg-gray-100 transition-all duration-200"
+              >
+                {t("profile.editProfile")}
+              </button>
+            )}
             {!isMe && (
               <>
                 <button

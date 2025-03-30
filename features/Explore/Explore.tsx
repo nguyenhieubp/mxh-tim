@@ -14,7 +14,7 @@ const Explore = () => {
   const [currentPostIndex, setCurrentPostIndex] = useState<number | null>(null);
   const [posts, setPosts] = useState<any[]>([]);
   const [page, setPage] = useState(1);
-  const [size] = useState(6);
+  const [size] = useState(3);
   const [hasMore, setHasMore] = useState(true);
   const observer = useRef<IntersectionObserver | null>(null);
   const [isLoading, setIsLoading] = useState(false);

@@ -182,7 +182,6 @@ const CreatePost: React.FC<CreatePostProps> = ({ setShowCreatePost }) => {
               }
             />
           </div>
-
           <ActionButtons
             onClose={handleClose}
             onSubmit={handleSubmit}

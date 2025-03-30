@@ -2,10 +2,9 @@
 
 import { usePathname } from 'next/navigation';
 import { IoHomeOutline } from "react-icons/io5";
-import { MdOutlineExplore } from "react-icons/md";
+import { MdOutlineExplore, MdOutlinePersonAdd } from "react-icons/md";
 import { PiTelegramLogo } from "react-icons/pi";
-import { FaRegHeart } from "react-icons/fa";
-import { FaRegSquarePlus } from "react-icons/fa6";
+import { FaRegHeart, FaRegSquarePlus } from "react-icons/fa6";
 import { CgProfile } from "react-icons/cg";
 import { MdOutlineSettings } from "react-icons/md";
 import SideBarItem from './SideBarItem';
@@ -21,15 +20,18 @@ interface SideBarNavProps {
 }
 
 const SideBarNav = ({ setShowNotifications, setShowCreatePost }: SideBarNavProps) => {
-    const dispacth = useAppDispatch();
+    const dispatch = useAppDispatch();
     const pathname = usePathname();
     const { t } = useTranslation();
 
     const userId = useAppSelector(state => state.auth.user?.userId);
-    useEffect(() => {
-        dispacth(getCurrentUser())
-    }, [userId])
 
+    useEffect(() => {
+        dispatch(getCurrentUser());
+    }, [dispatch]);
+
+
+    const isMyProfile = pathname.startsWith(`/profile/${userId}`);
 
     return (
         <ul className="space-y-2">
@@ -76,7 +78,15 @@ const SideBarNav = ({ setShowNotifications, setShowCreatePost }: SideBarNavProps
                     href={`/profile/${userId}`}
                     icon={<CgProfile size={25} />}
                     label={t('navigation.profile')}
-                    isActive={pathname.startsWith('/profile')}
+                    isActive={isMyProfile}
+                />
+            </li>
+            <li>
+                <SideBarItem
+                    href="/friends"
+                    icon={<MdOutlinePersonAdd size={25} />}
+                    label={t('navigation.friends')}
+                    isActive={pathname === '/friends'}
                 />
             </li>
             <li>

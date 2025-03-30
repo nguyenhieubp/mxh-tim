@@ -10,6 +10,7 @@ import { selectCurrentUser } from "@/redux/features/auth";
 import axios from "axios";
 import { APIs } from "@/configs/apis/listAPI";
 import { api } from "@/configs/apis/request";
+import LayoutMessage from "@/components/common/LayoutMessage";
 
 export interface IUser {
   id: number;
@@ -113,7 +114,7 @@ const Messages: React.FC = () => {
   useEffect(() => {
     if (room.length > 0) {
       const formattedUsers: IUser[] = room.map((user) => ({
-        id: user.userId, 
+        id: user.userId,
         username: user.username,
         profilePicture: user.profilePicture || "https://via.placeholder.com/150",
       }));
@@ -123,8 +124,11 @@ const Messages: React.FC = () => {
 
   return (
     <div className="flex">
-      {/* Sidebar user list */}
       <div className="w-[20rem] border-r-2 h-[100vh] overflow-y-auto scrollbar-hide">
+        <div className="py-4 m-0">
+          <LayoutMessage></LayoutMessage>
+        </div>
+        <hr />
         {users.map((user) => (
           <ItemUser
             key={user.id}

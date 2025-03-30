@@ -51,9 +51,39 @@ const UserProfilePage = ({ userId }: ProfilePageProps) => {
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
-  };
 
-  console.log("USERID ", userId);
+    // Fetch data based on selected tab
+    if (user?.userId) {
+      if (isMe) {
+        switch (newValue) {
+          case 0: // Private tab
+            setPostPrivate([]);
+            setPagePrivate(1);
+            setHasMorePrivate(true);
+            getPostPrivate(1);
+            break;
+          case 1: // Posts tab
+            setPosts([]);
+            setPagePosts(1);
+            setHasMorePosts(true);
+            getPosts(1);
+            break;
+          case 2: // Saved tab
+            setSavedPosts([]);
+            setPageSaved(1);
+            setHasMoreSaved(true);
+            getSavedPosts(1);
+            break;
+        }
+      } else {
+        // For non-owner, only fetch posts
+        setPosts([]);
+        setPagePosts(1);
+        setHasMorePosts(true);
+        getPosts(1);
+      }
+    }
+  };
 
   React.useEffect(() => {
     if (userId) {
@@ -68,16 +98,16 @@ const UserProfilePage = ({ userId }: ProfilePageProps) => {
       firstRender.current = false;
       setPosts([]);
       setPostPrivate([]);
-      setSavedPosts([]); // Add this
+      setSavedPosts([]); 
       setPagePosts(1);
       setPagePrivate(1);
-      setPageSaved(1); // Add this
+      setPageSaved(1); 
       setHasMorePosts(true);
       setHasMorePrivate(true);
-      setHasMoreSaved(true); // Add this
+      setHasMoreSaved(true); 
       getPosts(1);
       getPostPrivate(1);
-      getSavedPosts(1); // Add this
+      getSavedPosts(1);
     }
   }, [user]);
 
@@ -171,8 +201,22 @@ const UserProfilePage = ({ userId }: ProfilePageProps) => {
     }
   }, [value]);
 
+  const refreshAllPosts = React.useCallback(async () => {
+    // Reset all states
+    setPosts([]);
+    setPostPrivate([]);
+    setPagePosts(1);
+    setPagePrivate(1);
+    setHasMorePosts(true);
+    setHasMorePrivate(true);
 
-  console.log("+============ ", posts)
+    // Fetch first page of both types
+    await Promise.all([
+      getPosts(1),
+      getPostPrivate(1)
+    ]);
+  }, []);
+
 
   return (
     <div className="container mx-auto px-4 py-8 bg-white shadow-sm rounded-lg">
