@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import { useTranslation } from "react-i18next";
 
 export interface IUser {
   id: number;
@@ -12,6 +13,7 @@ interface ItemUserProps {
   onSelect: () => void;
   isSelected: boolean;
   isOnline?: boolean;
+  isTemporary?: boolean;
 }
 
 const ItemUser: React.FC<ItemUserProps> = ({
@@ -19,21 +21,20 @@ const ItemUser: React.FC<ItemUserProps> = ({
   onSelect,
   isSelected,
   isOnline = false,
+  isTemporary = false,
 }) => {
+  const { t } = useTranslation();
+  
   return (
     <div
       className={`flex items-center p-3 border-b cursor-pointer transition-all duration-300 rounded-lg ${
         isSelected ? "bg-blue-100 shadow-md scale-105" : "hover:bg-gray-100"
-      }`}
+      } ${isTemporary ? "border-l-4 border-l-blue-500" : ""}`}
       onClick={onSelect}
     >
       <div className="relative w-12 h-12">
         <Image
-          src={
-            user.profilePicture
-              ? `${process.env.NEXT_PUBLIC_API_URL}${user.profilePicture}`
-              : "https://via.placeholder.com/150"
-          }
+          src={user.profilePicture}
           alt={user.username}
           width={56}
           height={56}
@@ -51,7 +52,7 @@ const ItemUser: React.FC<ItemUserProps> = ({
             isOnline ? "text-green-600 font-medium" : "text-gray-500"
           }`}
         >
-          {isOnline ? "Online" : "Offline"}
+          {isTemporary ? t("messages.newMessage") : isOnline ? "Online" : "Offline"}
         </div>
       </div>
     </div>

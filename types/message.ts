@@ -4,6 +4,7 @@ export interface IMessage {
   receiverId: string;
   content: string;
   timestamp?: Date;
+  createdAt?: Date | string;
   read?: boolean;
 }
 

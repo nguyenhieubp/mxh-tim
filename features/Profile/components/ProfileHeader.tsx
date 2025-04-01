@@ -10,7 +10,7 @@ import { Modal } from "@mui/material";
 import { useAppSelector } from "@/redux/configs/hooks";
 import { selectCurrentUser } from "@/redux/features/auth";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 interface IUser {
   userId: string;
@@ -21,6 +21,7 @@ interface IUser {
 }
 
 const ProfileHeader = ({ user }: { user: IUser | undefined }) => {
+  const router = useRouter();
   const pathname = usePathname();
   const id = pathname.split("/").pop();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -141,6 +142,13 @@ const ProfileHeader = ({ user }: { user: IUser | undefined }) => {
     }
   }, [isFollowing, userMe, userData, getFollowers, getFollowing]);
 
+  const handleMessageClick = useCallback(async () => {
+    if (!userData) return;
+    
+    // Only navigate to messages page without creating a conversation
+    router.push(`/messages/${userData.userId}`);
+  }, [userData, router]);
+
   return (
     <>
       <div className="flex flex-col md:flex-row items-center md:items-start md:space-x-8 border-b pb-4 mb-4">
@@ -181,12 +189,12 @@ const ProfileHeader = ({ user }: { user: IUser | undefined }) => {
                 >
                   {isFollowing ? "Hủy theo dõi" : "Theo dõi"}
                 </button>
-                <Link
-                  href={`/messages/${user?.userId}`}
+                <button
+                  onClick={handleMessageClick}
                   className="px-4 py-1 border rounded text-sm font-semibold hover:bg-gray-100 transition-all duration-200"
                 >
                   Message
-                </Link>
+                </button>
               </>
             )}
           </div>

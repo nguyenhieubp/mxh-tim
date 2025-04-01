@@ -77,10 +77,16 @@
     "send": "Gửi",
     "call": "Gọi điện",
     "videoCall": "Gọi video",
+    "connecting": "Đang kết nối...",
+    "newMessage": "Tin nhắn mới",
     "defaultMessages": {
       "greeting": "Xin chào!",
       "howAreYou": "Bạn khỏe không?",
       "imFine": "Tớ khỏe, cảm ơn!"
+    },
+    "newChat": {
+      "startConversation": "Bắt đầu cuộc trò chuyện",
+      "sendFirstMessage": "Gửi tin nhắn để bắt đầu trò chuyện với người này."
     }
   },
   "comment": {

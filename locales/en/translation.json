@@ -77,10 +77,16 @@
     "send": "Send",
     "call": "Call",
     "videoCall": "Video Call",
+    "connecting": "Connecting...",
+    "newMessage": "New message",
     "defaultMessages": {
       "greeting": "Hello!",
       "howAreYou": "How are you?",
       "imFine": "I'm fine, thank you!"
+    },
+    "newChat": {
+      "startConversation": "Start a conversation",
+      "sendFirstMessage": "Send a message to start chatting with this person."
     }
   },
   "comment": {
