@@ -79,6 +79,8 @@
     "videoCall": "Gọi video",
     "connecting": "Đang kết nối...",
     "newMessage": "Tin nhắn mới",
+    "searchConversations": "Tìm kiếm cuộc trò chuyện...",
+    "noResults": "Không tìm thấy cuộc trò chuyện nào",
     "defaultMessages": {
       "greeting": "Xin chào!",
       "howAreYou": "Bạn khỏe không?",

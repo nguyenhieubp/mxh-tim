@@ -79,6 +79,8 @@
     "videoCall": "Video Call",
     "connecting": "Connecting...",
     "newMessage": "New message",
+    "searchConversations": "Search conversations...",
+    "noResults": "No conversations found",
     "defaultMessages": {
       "greeting": "Hello!",
       "howAreYou": "How are you?",

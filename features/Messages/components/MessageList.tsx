@@ -58,9 +58,9 @@ const MessageList: React.FC<MessageListProps> = ({ messages, chatEndRef, current
   return (
     <div 
       ref={containerRef}
-      className="flex-1 p-4 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent"
+      className="flex-1 p-2 sm:p-4 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent"
     >
-      <div className="space-y-4">
+      <div className="space-y-2 sm:space-y-4">
         {messages.map((msg, index) => {
           const isMe = msg.sender === "me";
           const user = isMe ? currentUser : otherUser;
@@ -68,21 +68,35 @@ const MessageList: React.FC<MessageListProps> = ({ messages, chatEndRef, current
             messages[index - 1]?.sender !== msg.sender;
 
           return (
-            <div key={index} className={`flex items-end gap-2 ${isMe ? "flex-row-reverse" : "flex-row"}`}>
+            <div key={index} className={`flex items-end gap-1 sm:gap-2 ${isMe ? "flex-row-reverse" : "flex-row"}`}>
               {/* Avatar container - maintains space even when avatar isn't shown */}
-              <div className="flex-shrink-0 w-8">
-                {showAvatar && renderAvatar(user)}
+              <div className="flex-shrink-0 w-6 sm:w-8">
+                {showAvatar && (
+                  <div className="h-6 w-6 sm:h-8 sm:w-8 rounded-full overflow-hidden">
+                    {user.profilePicture ? (
+                      <img
+                        src={user.profilePicture}
+                        alt={user.username}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <div className="h-full w-full bg-blue-100 flex items-center justify-center text-blue-500 text-xs sm:text-sm font-bold">
+                        {user.username.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Message content */}
-              <div className={`flex flex-col ${isMe ? "items-end" : "items-start"} max-w-[70%]`}>
+              <div className={`flex flex-col ${isMe ? "items-end" : "items-start"} max-w-[75%] sm:max-w-[70%]`}>
                 {showAvatar && (
-                  <span className="text-xs text-gray-500 mb-1">
+                  <span className="text-xs text-gray-500 mb-1 px-1">
                     {user.username}
                   </span>
                 )}
                 <div
-                  className={`px-4 py-2 rounded-2xl ${
+                  className={`px-3 py-2 sm:px-4 sm:py-2 rounded-2xl text-sm ${
                     isMe 
                       ? "bg-blue-500 text-white rounded-tr-none" 
                       : "bg-gray-100 text-gray-800 rounded-tl-none"
@@ -90,7 +104,7 @@ const MessageList: React.FC<MessageListProps> = ({ messages, chatEndRef, current
                 >
                   <div className="break-words">{msg.text}</div>
                   {msg.timestamp && (
-                    <div className={`text-xs mt-1 ${isMe ? "text-blue-100" : "text-gray-500"}`}>
+                    <div className={`text-[10px] sm:text-xs mt-1 ${isMe ? "text-blue-100" : "text-gray-500"}`}>
                       {formatMessageTime(msg.timestamp)}
                     </div>
                   )}
@@ -99,7 +113,7 @@ const MessageList: React.FC<MessageListProps> = ({ messages, chatEndRef, current
             </div>
           );
         })}
-        <div ref={chatEndRef} className="h-4" /> {/* Add padding at bottom */}
+        <div ref={chatEndRef} className="h-2 sm:h-4" />
       </div>
     </div>
   );

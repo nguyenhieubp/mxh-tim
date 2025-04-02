@@ -1,5 +1,17 @@
 import { io, Socket } from 'socket.io-client';
 
+interface CallEvents {
+  offer: RTCSessionDescriptionInit;
+  answer: RTCSessionDescriptionInit;
+  iceCandidate: RTCIceCandidateInit;
+  endCall: void;
+  caller: {
+    id: string;
+    username: string;
+    profilePicture: string;
+  };
+}
+
 class SocketService {
   private socket: Socket | null = null;
   private userId: string | null = null;
@@ -74,6 +86,52 @@ class SocketService {
   // Add method to check connection status
   isConnected(): boolean {
     return this.socket?.connected || false;
+  }
+
+  // Call methods
+  sendCallOffer(targetUserId: string, offer: RTCSessionDescriptionInit, caller: { id: string; username: string; profilePicture: string }) {
+    if (!this.socket) return;
+    this.socket.emit('call:offer', { targetUserId, offer, caller });
+  }
+
+  sendCallAnswer(targetUserId: string, answer: RTCSessionDescriptionInit) {
+    if (!this.socket) return;
+    this.socket.emit('call:answer', { targetUserId, answer });
+  }
+
+  sendIceCandidate(targetUserId: string, candidate: RTCIceCandidateInit) {
+    if (!this.socket) return;
+    this.socket.emit('call:ice-candidate', { targetUserId, candidate });
+  }
+
+  sendEndCall(targetUserId: string) {
+    if (!this.socket) return;
+    this.socket.emit('call:end', { targetUserId });
+  }
+
+  onCallOffer(callback: (offer: RTCSessionDescriptionInit, caller: { id: string; username: string; profilePicture: string }) => void) {
+    if (!this.socket) return;
+    this.socket.on('call:offer', ({ offer, caller }) => callback(offer, caller));
+  }
+
+  onCallAnswer(callback: (answer: RTCSessionDescriptionInit) => void) {
+    if (!this.socket) return;
+    this.socket.on('call:answer', ({ answer }) => callback(answer));
+  }
+
+  onIceCandidate(callback: (candidate: RTCIceCandidateInit) => void) {
+    if (!this.socket) return;
+    this.socket.on('call:ice-candidate', ({ candidate }) => callback(candidate));
+  }
+
+  onEndCall(callback: () => void) {
+    if (!this.socket) return;
+    this.socket.on('call:end', callback);
+  }
+
+  removeListener(event: string) {
+    if (!this.socket) return;
+    this.socket.off(event);
   }
 }
 
