@@ -21,9 +21,11 @@ import React, { useState } from "react";
 import moment from "moment";
 import { useRouter } from "next/navigation";
 import AlertSnackbar from "@/components/common/AlertSnackbar";
+import { useAppSelector } from "@/redux/configs/hooks";
 
 const InfoUser = ({ post }: { post: IPost }) => {
   const router = useRouter();
+  const userCurrent = useAppSelector((state) => state.auth.user);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [openReportDialog, setOpenReportDialog] = useState(false);
   const [reason, setReason] = useState('');
@@ -63,13 +65,13 @@ const InfoUser = ({ post }: { post: IPost }) => {
 
   const handleReportSubmit = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER}/post/${post.postId}/report`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER}/post/${post?.postId}/report`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userId: post.user.userId,
+          userId: userCurrent?.userId,
           reason,
           description
         }),

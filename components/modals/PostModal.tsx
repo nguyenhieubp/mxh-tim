@@ -1,4 +1,4 @@
-import { IconButton, Modal } from "@mui/material";
+import { IconButton, Modal, Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, FormControl, InputLabel, Select } from "@mui/material";
 import {
   FavoriteBorder,
   ChatBubbleOutline,
@@ -8,6 +8,8 @@ import {
   ArrowBackIos,
   ArrowForwardIos,
   Favorite,
+  MoreVert,
+  ReportProblem,
 } from "@mui/icons-material";
 import * as React from "react";
 import { fetchPostById, fetchPostLikes, Like } from "@/redux/features/post";
@@ -21,6 +23,7 @@ import { getAuthHeaders } from "@/utils/api";
 import { useRouter } from "next/navigation";
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import socketService from "@/services/socketService";
+import AlertSnackbar from "@/components/common/AlertSnackbar";
 
 interface PostModalProps {
   open: boolean;
@@ -98,6 +101,17 @@ const PostModal: React.FC<PostModalProps> = ({
   const [expandedCommentIds, setExpandedCommentIds] = React.useState<string[]>([]);
   const [currentPage, setCurrentPage] = React.useState(1);
   const hasLiked = likes?.some((like) => like.user.userId === userCurrent?.userId);
+
+  // Add new state for report functionality
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [openReportDialog, setOpenReportDialog] = React.useState(false);
+  const [reason, setReason] = React.useState('');
+  const [description, setDescription] = React.useState('');
+  const [alert, setAlert] = React.useState({
+    open: false,
+    message: '',
+    severity: 'success' as 'success' | 'error' | 'warning' | 'info'
+  });
 
   const fetchComments = React.useCallback(async (page: number) => {
     setLoading(true);
@@ -229,6 +243,64 @@ const PostModal: React.FC<PostModalProps> = ({
     router.push(`/profile/${userId}`);
   };
 
+  const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleReportClick = () => {
+    handleMenuClose();
+    setOpenReportDialog(true);
+  };
+
+  const handleReportClose = () => {
+    setOpenReportDialog(false);
+    setReason('');
+    setDescription('');
+  };
+
+  const handleReportSubmit = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER}/post/${post?.postId}/report`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: userCurrent?.userId,
+          reason,
+          description
+        }),
+      });
+
+      const result = await response.json();
+      if (result.status === 201) {
+        handleReportClose();
+        setAlert({
+          open: true,
+          message: 'Báo cáo bài viết thành công',
+          severity: 'success'
+        });
+      } else {
+        setAlert({
+          open: true,
+          message: result.message || 'Có lỗi xảy ra khi báo cáo',
+          severity: 'error'
+        });
+      }
+    } catch (error) {
+      console.error('Error reporting post:', error);
+      setAlert({
+        open: true,
+        message: 'Có lỗi xảy ra khi báo cáo',
+        severity: 'error'
+      });
+    }
+  };
+
   if (!post) return null;
 
   return (
@@ -324,16 +396,21 @@ const PostModal: React.FC<PostModalProps> = ({
 
             <div className="w-[40rem] h-full">
               <div className="border-b-2 border-gray-200 p-4">
-                <div className="flex items-center gap-3">
-                  <Image
-                    src={`${process.env.NEXT_PUBLIC_API_URL}${post?.user?.profilePicture}` || "/default-post-image.jpg"}
-                    width={100}
-                    height={100}
-                    onClick={() => handleNavigateToProfile(post?.user?.userId)}
-                    className="w-8 h-8 rounded-full cursor-pointer"
-                    alt={""}
-                  />
-                  <span className="font-semibold">{post?.user.username}</span>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Image
+                      src={`${process.env.NEXT_PUBLIC_API_URL}${post?.user?.profilePicture}` || "/default-post-image.jpg"}
+                      width={100}
+                      height={100}
+                      onClick={() => handleNavigateToProfile(post?.user?.userId)}
+                      className="w-8 h-8 rounded-full cursor-pointer"
+                      alt={""}
+                    />
+                    <span className="font-semibold">{post?.user.username}</span>
+                  </div>
+                  <IconButton onClick={handleMenuClick}>
+                    <MoreVert />
+                  </IconButton>
                 </div>
               </div>
 
@@ -503,6 +580,77 @@ const PostModal: React.FC<PostModalProps> = ({
             </div>
           </div>
         </div>
+
+        {/* Add Report Menu */}
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+        >
+          <MenuItem onClick={handleReportClick}>
+            <ReportProblem className="mr-2" />
+            Báo cáo bài viết
+          </MenuItem>
+        </Menu>
+
+        {/* Add Report Dialog */}
+        <Dialog
+          open={openReportDialog}
+          onClose={handleReportClose}
+          maxWidth="sm"
+          fullWidth
+        >
+          <DialogTitle className="flex items-center">
+            <ReportProblem className="mr-2 text-red-500" />
+            Báo cáo bài viết
+          </DialogTitle>
+          <DialogContent>
+            <div className="space-y-4 mt-4">
+              <FormControl fullWidth>
+                <InputLabel>Lý do báo cáo</InputLabel>
+                <Select
+                  value={reason}
+                  label="Lý do báo cáo"
+                  onChange={(e) => setReason(e.target.value)}
+                >
+                  <MenuItem value="SPAM">Spam</MenuItem>
+                  <MenuItem value="INAPPROPRIATE">Nội dung không phù hợp</MenuItem>
+                  <MenuItem value="HARASSMENT">Quấy rối</MenuItem>
+                  <MenuItem value="VIOLENCE">Bạo lực</MenuItem>
+                  <MenuItem value="OTHER">Khác</MenuItem>
+                </Select>
+              </FormControl>
+
+              <TextField
+                fullWidth
+                multiline
+                rows={4}
+                label="Mô tả chi tiết"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            </div>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleReportClose}>Hủy</Button>
+            <Button
+              onClick={handleReportSubmit}
+              variant="contained"
+              color="error"
+              disabled={!reason || !description}
+            >
+              Gửi báo cáo
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Add Alert Snackbar */}
+        <AlertSnackbar
+          open={alert.open}
+          onClose={() => setAlert({ ...alert, open: false })}
+          message={alert.message}
+          severity={alert.severity}
+        />
       </div>
     </Modal>
   );
