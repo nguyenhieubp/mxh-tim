@@ -37,7 +37,17 @@
     "website": "Trang web",
     "posts": "bài viết",
     "followers": "người theo dõi",
-    "following": "đang theo dõi"
+    "following": "đang theo dõi",
+    "follow": "Theo dõi",
+    "unfollow": "Hủy theo dõi",
+    "message": "Nhắn tin",
+    "followersList": "Danh sách người theo dõi",
+    "followingList": "Danh sách đang theo dõi",
+    "tabs": {
+      "private": "Riêng tư",
+      "posts": "Bài viết",
+      "saved": "Đã lưu"
+    }
   },
   "post": {
     "like": "Thích",
@@ -50,7 +60,33 @@
     "addComment": "Thêm bình luận...",
     "days": "ngày",
     "imageAlt": "Ảnh bài viết",
-    "add_comment": "Thêm bình luận..."
+    "add_comment": "Thêm bình luận...",
+    "settings": {
+      "title": "Cài đặt bài viết",
+      "postContent": "Nội dung bài viết:",
+      "noContent": "Không có nội dung",
+      "privacyOptions": "Tùy chọn quyền riêng tư",
+      "public": "Công khai",
+      "private": "Riêng tư",
+      "publicDesc": "Mọi người có thể xem bài viết này",
+      "privateDesc": "Chỉ bạn mới có thể xem bài viết này",
+      "allowComments": "Cho phép bình luận",
+      "disableComments": "Tắt bình luận",
+      "commentsDesc": "Mọi người có thể bình luận về bài viết này",
+      "noCommentsDesc": "Không ai có thể bình luận về bài viết này",
+      "cancel": "Hủy",
+      "saveSettings": "Lưu cài đặt"
+    },
+    "delete": {
+      "title": "Xác nhận xóa bài viết",
+      "confirm": "Bạn có chắc chắn muốn xóa bài viết này?",
+      "warning": "Hành động này không thể hoàn tác. Bài viết sẽ bị xóa vĩnh viễn.",
+      "cancel": "Hủy",
+      "delete": "Xóa bài viết",
+      "deleting": "Đang xóa...",
+      "success": "Xóa bài viết thành công!",
+      "error": "Có lỗi xảy ra khi xóa bài viết!"
+    }
   },
   "createPost": {
     "title": "Tạo bài viết mới",
@@ -89,6 +125,24 @@
     "newChat": {
       "startConversation": "Bắt đầu cuộc trò chuyện",
       "sendFirstMessage": "Gửi tin nhắn để bắt đầu trò chuyện với người này."
+    },
+    "emptyState": {
+      "title": "Chưa có cuộc trò chuyện nào",
+      "description": "Bắt đầu trò chuyện với bạn bè của bạn",
+      "startChat": "Bắt đầu trò chuyện"
+    },
+    "errors": {
+      "fetchError": "Không thể tải danh sách trò chuyện",
+      "sendError": "Không thể gửi tin nhắn",
+      "connectionError": "Lỗi kết nối"
+    },
+    "status": {
+      "online": "Đang hoạt động",
+      "offline": "Ngoại tuyến",
+      "typing": "Đang soạn tin nhắn..."
+    },
+    "user": {
+      "you": "Bạn"
     }
   },
   "comment": {

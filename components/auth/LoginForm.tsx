@@ -4,6 +4,7 @@ import { login } from "@/redux/features/auth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import AlertSnackbar from "../common/AlertSnackbar";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const LoginForm = () => {
   const dispatch = useAppDispatch();
@@ -12,6 +13,7 @@ const LoginForm = () => {
     email: "",
     password: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
 
   const [alert, setAlert] = useState({
     open: false,
@@ -30,6 +32,10 @@ const LoginForm = () => {
     setAlert((prev) => ({ ...prev, open: false }));
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -37,7 +43,7 @@ const LoginForm = () => {
       setError("");
       setAlert({
         open: true,
-        message: "Login successful! Redirecting...",
+        message: "Đăng nhập thành công! Đang chuyển hướng...",
         severity: "success",
       });
       setTimeout(() => {
@@ -45,29 +51,24 @@ const LoginForm = () => {
       }, 1500);
     } catch (error: any) {
       if (error?.response?.status === 401) {
-        setError("Email or password is incorrect");
+        setError("Email hoặc mật khẩu không đúng");
       } else if (error?.response?.status === 404) {
-        setError("Email not found");
+        setError("Không tìm thấy email");
       } else {
-        setError("An error occurred. Please try again.");
+        setError("Có lỗi xảy ra. Vui lòng thử lại.");
       }
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-purple-50 to-pink-50">
-      <AlertSnackbar
-        open={alert.open}
-        onClose={handleCloseAlert}
-        message={alert.message}
-        severity={alert.severity}
-      />
-      <div className="max-w-md w-full space-y-4 p-8">
-        <div className="bg-white p-8 rounded-2xl shadow-xl space-y-6 border border-gray-100">
-          <div className="flex justify-center">
-            <h1 className="text-3xl cursor-pointer font-bold mb-8 px-3 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent hover:from-pink-600 hover:to-purple-600 transition-all duration-300">
-              Socialverse
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center p-4">
+      <div className="max-w-md w-full space-y-6">
+        <div className="bg-white rounded-2xl shadow-xl p-8 space-y-6">
+          <div className="text-center">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              SocialVerse
             </h1>
+            <p className="mt-2 text-gray-600">Đăng nhập vào tài khoản của bạn</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -79,67 +80,79 @@ const LoginForm = () => {
                   placeholder="Email"
                   value={formData.email}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 rounded-lg border ${
-                    error ? "border-red-500" : "border-gray-200"
-                  } focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 transition-colors bg-gray-50`}
+                  className={`w-full px-4 py-3 rounded-xl border ${error ? "border-red-500" : "border-gray-200"
+                    } focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all bg-gray-50`}
+                  required
                 />
               </div>
 
-              <div>
+              <div className="relative">
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   name="password"
-                  placeholder="Password"
+                  placeholder="Mật khẩu"
                   value={formData.password}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 rounded-lg border ${
-                    error ? "border-red-500" : "border-gray-200"
-                  } focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 transition-colors bg-gray-50`}
+                  className={`w-full px-4 py-3 rounded-xl border ${error ? "border-red-500" : "border-gray-200"
+                    } focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all bg-gray-50`}
+                  required
                 />
+                <button
+                  type="button"
+                  onClick={togglePasswordVisibility}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  {showPassword ? (
+                    <VisibilityOff className="h-5 w-5" />
+                  ) : (
+                    <Visibility className="h-5 w-5" />
+                  )}
+                </button>
               </div>
 
               {error && (
-                <p className="text-xs text-red-500 text-center">{error}</p>
+                <p className="text-sm text-red-500 text-center">{error}</p>
               )}
             </div>
 
             <button
               type="submit"
               disabled={!formData.email || !formData.password}
-              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 rounded-lg font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 rounded-xl font-semibold hover:from-blue-600 hover:to-purple-600 transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
-              Log In
+              Đăng nhập
             </button>
           </form>
 
-          <div className="flex items-center justify-center space-x-2">
-            <span className="w-24 h-px bg-gray-200"></span>
-            <span className="text-gray-400 font-medium">or</span>
-            <span className="w-24 h-px bg-gray-200"></span>
-          </div>
-
           <div className="text-center">
             <Link
-              href="#"
-              className="text-sm text-blue-900 font-semibold hover:text-blue-700 transition-colors"
+              href="/forgot-password"
+              className="text-sm text-blue-500 font-semibold hover:text-blue-600 transition-colors"
             >
-              Forgot password?
+              Quên mật khẩu?
             </Link>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl shadow-xl border border-gray-100">
-          <p className="text-center text-gray-600">
-            Don&apos;t have an account?{" "}
+        <div className="bg-white rounded-2xl shadow-xl p-6 text-center">
+          <p className="text-gray-600">
+            Chưa có tài khoản?{" "}
             <Link
               href="/register"
               className="text-blue-500 font-semibold hover:text-blue-600 transition-colors"
             >
-              Sign up
+              Đăng ký
             </Link>
           </p>
         </div>
       </div>
+
+      <AlertSnackbar
+        open={alert.open}
+        onClose={handleCloseAlert}
+        message={alert.message}
+        severity={alert.severity}
+      />
     </div>
   );
 };

@@ -4,7 +4,7 @@ import MessageList from "./MessageList";
 import MessageInput from "./MessageInput";
 import { useTranslation } from 'react-i18next';
 import socketService from "@/services/socketService";
-import { IChatMessage, IMessage } from "@/types/message";
+import { IChatMessage, IMessage } from "@/features/Messages/message";
 import { useAppSelector } from "@/redux/configs/hooks";
 import { selectCurrentUser } from "@/redux/features/auth";
 import axios from "axios";

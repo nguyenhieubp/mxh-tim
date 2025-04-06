@@ -16,6 +16,7 @@ import { createComment } from "@/redux/features/comment";
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import PostModal from "@/components/modals/PostModal";
+import socketService from "@/services/socketService";
 
 export default function ItemPost({ post }: { post: IPost }) {
   const { t } = useTranslation();
@@ -64,6 +65,27 @@ export default function ItemPost({ post }: { post: IPost }) {
         `${process.env.NEXT_PUBLIC_SERVER}/post/like-all/${post.postId}`
       );
       setLikes(data.data);
+
+      // Create notification when liking (not when unliking)
+      if (!hasLiked) {
+        try {
+          // Send real-time notification via socket
+          if (socketService.isConnected() && userId && post.user.userId) {
+            socketService.sendNotification({
+              actor: userId,
+              userId: post.user.userId,
+              title: 'New Like',
+              content: 'liked your post',
+              data: {
+                type: 'like',
+                postId: post.postId
+              }
+            });
+          }
+        } catch (error) {
+          console.error("Error creating notification:", error);
+        }
+      }
     } catch (error) {
       console.error("Error updating like:", error);
       setLikes((prev: any) =>
@@ -83,16 +105,33 @@ export default function ItemPost({ post }: { post: IPost }) {
         content: comment,
       })
     );
+
+    try {
+      // Send real-time notification via socket
+      if (socketService.isConnected() && userId && post.user.userId) {
+        socketService.sendNotification({
+          actor: userId,
+          userId: post.user.userId,
+          title: 'New Comment',
+          content: 'commented on your post',
+          data: {
+            type: 'comment',
+            postId: post.postId,
+            commentContent: comment
+          }
+        });
+      }
+    } catch (error) {
+      console.error("Error creating comment notification:", error);
+    }
+
     setCommet("");
     setNumberComments((prev: any) => prev + 1);
   };
 
-  // Add new state for shareId
-  // Add this at the top with other state declarations
   const [isShared, setIsShared] = React.useState(false);
   const [shareId, setShareId] = React.useState<string | null>(null);
 
-  // Update the useEffect for checking share status
   React.useEffect(() => {
     const checkShareStatus = async () => {
       if (!userId || !post.postId) return;

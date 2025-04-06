@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from "react";
-import { IChatMessage } from "@/types/message";
+import { IChatMessage } from "@/features/Messages/message";
 import { formatDistanceToNow } from "date-fns";
 import { IUser } from "../Messages";
+import { useTranslation } from "react-i18next";
 
 interface MessageListProps {
   messages: IChatMessage[];
@@ -11,6 +12,7 @@ interface MessageListProps {
 }
 
 const MessageList: React.FC<MessageListProps> = ({ messages, chatEndRef, currentUser, otherUser }) => {
+  const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const lastScrollHeightRef = useRef<number>(0);
 
@@ -92,7 +94,7 @@ const MessageList: React.FC<MessageListProps> = ({ messages, chatEndRef, current
               <div className={`flex flex-col ${isMe ? "items-end" : "items-start"} max-w-[75%] sm:max-w-[70%]`}>
                 {showAvatar && (
                   <span className="text-xs text-gray-500 mb-1 px-1">
-                    {user.username}
+                    {isMe ? t("messages.user.you") : user.username}
                   </span>
                 )}
                 <div

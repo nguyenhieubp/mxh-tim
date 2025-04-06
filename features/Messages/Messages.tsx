@@ -22,16 +22,12 @@ const Messages: React.FC = () => {
   const { t } = useTranslation();
   const params = useParams();
   const router = useRouter();
-  const targetUserId = params.id as string;
+  const targetUserId = params?.id as string;
 
   const userId = useAppSelector(selectCurrentUser)?.userId;
   const [selectedUser, setSelectedUser] = useState<IUser | null>(null);
   const [users, setUsers] = useState<IUser[]>([]);
   const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());
-  const [conversation, setConversation] = useState<Array<any>>([]);
-  const [otherUsers, setOtherUsers] = useState<string[]>([]);
-  const [room, setRoom] = useState<any[]>([]);
-  const [tempUser, setTempUser] = useState<IUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredUsers, setFilteredUsers] = useState<IUser[]>([]);
@@ -59,14 +55,12 @@ const Messages: React.FC = () => {
       });
 
       console.log("Sorted conversations:", sortedConversations);
-      setConversation(sortedConversations);
 
       // Extract other user IDs from conversations
       const otherUserIds = sortedConversations.map((conv: any) =>
         conv.user1Id === userId ? conv.user2Id : conv.user1Id
       );
       console.log("Other user IDs:", otherUserIds);
-      setOtherUsers(otherUserIds);
 
       // Fetch user details for each conversation
       if (otherUserIds.length > 0) {
@@ -100,12 +94,10 @@ const Messages: React.FC = () => {
         setUsers(formattedUsers);
       } else {
         console.log("No conversations found, setting empty users array");
-        // Nếu không có cuộc trò chuyện nào, đặt danh sách người dùng rỗng
         setUsers([]);
       }
     } catch (error) {
       console.error("Error fetching conversations and users:", error);
-      // Trong trường hợp lỗi, đặt danh sách người dùng rỗng
       setUsers([]);
     } finally {
       setIsLoading(false);
@@ -121,16 +113,6 @@ const Messages: React.FC = () => {
   useEffect(() => {
     const fetchTargetUser = async () => {
       if (!targetUserId || !userId) return;
-
-      // Check if targetUserId is already in the otherUsers list
-      if (otherUsers.includes(targetUserId)) {
-        // Find and select the existing user
-        const existingUser = users.find(u => u.id.toString() === targetUserId);
-        if (existingUser) {
-          setSelectedUser(existingUser);
-          return;
-        }
-      }
 
       try {
         const response = await axios.get(
@@ -148,7 +130,6 @@ const Messages: React.FC = () => {
           lastMessageAt: undefined,
         };
 
-        setTempUser(formattedUser);
         setSelectedUser(formattedUser);
       } catch (error) {
         console.error("Error fetching target user profile:", error);
@@ -156,7 +137,7 @@ const Messages: React.FC = () => {
     };
 
     fetchTargetUser();
-  }, [targetUserId, userId, otherUsers, users]);
+  }, [targetUserId, userId]);
 
   // Connect to socket and handle online users
   useEffect(() => {
@@ -170,9 +151,7 @@ const Messages: React.FC = () => {
 
     // Listen for new messages to update conversation list
     socket.on("receiveMessage", (message) => {
-      // Thay vì gọi fetchConversationsAndUsers() trực tiếp, cập nhật UI một cách mượt mà hơn
       if (message && (message.senderId === userId || message.receiverId === userId)) {
-        // Chỉ cập nhật nếu tin nhắn liên quan đến người dùng hiện tại
         fetchConversationsAndUsers();
       }
     });
@@ -200,13 +179,10 @@ const Messages: React.FC = () => {
 
   const handleUserSelect = (user: IUser) => {
     setSelectedUser(user);
-    // Update URL without full page reload
     router.push(`/messages/${user.id}`, { scroll: false });
   };
 
-  // Hàm xử lý khi tin nhắn được gửi
   const handleMessageSent = () => {
-    // Cập nhật danh sách cuộc trò chuyện ngay lập tức
     fetchConversationsAndUsers();
   };
 
@@ -250,97 +226,50 @@ const Messages: React.FC = () => {
         </div>
 
         {/* User list */}
-        <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 hover:scrollbar-thumb-gray-400 transition-all duration-200">
-          {/* Show temporary user at the top if it exists */}
-          {tempUser && !users.some(user => user.id.toString() === tempUser.id.toString()) && (
-            <div className="px-3 py-2">
-              <ItemUser
-                key={tempUser.id}
-                user={tempUser}
-                onSelect={() => handleUserSelect(tempUser)}
-                isSelected={selectedUser?.id === tempUser.id}
-                isOnline={onlineUsers.has(tempUser.id.toString())}
-                isTemporary={true}
-              />
+        <div className="flex-1 overflow-y-auto">
+          {isLoading ? (
+            <div className="flex justify-center items-center h-full">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
             </div>
+          ) : filteredUsers.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-full p-4 text-center">
+              <p className="text-gray-500 text-lg font-medium mb-2">{t("messages.emptyState.title")}</p>
+              <p className="text-gray-400 text-sm mb-4">{t("messages.emptyState.description")}</p>
+              <button
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                onClick={() => router.push("/explore")}
+              >
+                {t("messages.emptyState.startChat")}
+              </button>
+            </div>
+          ) : (
+            filteredUsers.map((user) => (
+              <ItemUser
+                key={user.id}
+                user={user}
+                isSelected={selectedUser?.id === user.id}
+                onSelect={() => handleUserSelect(user)}
+                isOnline={onlineUsers.has(user.id.toString())}
+              />
+            ))
           )}
-
-          {/* Show existing conversations */}
-          <div className="px-3 space-y-1">
-            {filteredUsers.length > 0 ? (
-              filteredUsers.map((user) => (
-                <div key={user.id} className="py-1">
-                  <ItemUser
-                    user={user}
-                    onSelect={() => handleUserSelect(user)}
-                    isSelected={selectedUser?.id === user.id}
-                    isOnline={onlineUsers.has(user.id.toString())}
-                  />
-                </div>
-              ))
-            ) : (
-              <div className="py-8 text-center">
-                <div className="text-gray-500 mb-2">
-                  {t("messages.noResults")}
-                </div>
-                <div className="text-sm text-gray-400 mb-4">
-                  {t("messages.newChat.startConversation")}
-                </div>
-                <button
-                  onClick={() => router.push('/explore')}
-                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-                >
-                  {t("messages.newChat.findUsers")}
-                </button>
-              </div>
-            )}
-          </div>
         </div>
       </div>
 
       {/* Chat area */}
-      <div className={`
-        ${selectedUser ? 'block' : 'hidden md:block'}
-        flex-1 h-full relative
-      `}>
-        {/* Mobile back button */}
-        {selectedUser && (
-          <button
-            onClick={() => setSelectedUser(null)}
-            className="md:hidden absolute top-4 left-4 z-10 p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-        )}
-
+      <div className={`flex-1 ${!selectedUser ? 'hidden md:block' : 'block'}`}>
         {selectedUser ? (
-          <div className="h-full">
-            <ChatBox
-              user={selectedUser}
-              onMessageSent={handleMessageSent}
-            />
-          </div>
+          <ChatBox
+            user={selectedUser}
+            onMessageSent={handleMessageSent}
+          />
         ) : (
-          <div className="flex items-center justify-center h-full text-center p-4">
-            <div className="max-w-md">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto mb-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-              </svg>
-              <h3 className="text-xl font-semibold mb-2">{t("messages.selectConversation")}</h3>
-              <p className="text-gray-500">{t("messages.selectConversationHint")}</p>
-            </div>
+          <div className="flex flex-col items-center justify-center h-full p-4 text-center">
+            <p className="text-gray-500 text-lg font-medium mb-2">{t("messages.selectConversation")}</p>
+            <p className="text-gray-400 text-sm">{t("messages.newChat.sendFirstMessage")}</p>
           </div>
         )}
       </div>
-
-      {/* Loading overlay */}
-      {isLoading && (
-        <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-        </div>
-      )}
     </div>
   );
 };

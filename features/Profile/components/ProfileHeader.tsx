@@ -23,7 +23,7 @@ interface IUser {
 const ProfileHeader = ({ user }: { user: IUser | undefined }) => {
   const router = useRouter();
   const pathname = usePathname();
-  const id = pathname.split("/").pop();
+  const id = pathname?.split("/").pop();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [userData, setUserData] = useState<IUser | undefined>(user);
   const [following, setFollowing] = useState<any>([]);
@@ -187,13 +187,13 @@ const ProfileHeader = ({ user }: { user: IUser | undefined }) => {
                   onClick={handleFollowToggle}
                   className="px-4 py-1 border rounded text-sm font-semibold hover:bg-gray-100 transition-all duration-200"
                 >
-                  {isFollowing ? "Hủy theo dõi" : "Theo dõi"}
+                  {isFollowing ? t("profile.unfollow") : t("profile.follow")}
                 </button>
                 <button
                   onClick={handleMessageClick}
                   className="px-4 py-1 border rounded text-sm font-semibold hover:bg-gray-100 transition-all duration-200"
                 >
-                  Message
+                  {t("profile.message")}
                 </button>
               </>
             )}
@@ -237,16 +237,16 @@ const ProfileHeader = ({ user }: { user: IUser | undefined }) => {
         open={isFollowersModalOpen}
         onClose={() => setIsFollowersModalOpen(false)}
         type="followers"
-        title={t("profile.followers")}
-        userId={userData?.userId} // Add userId
+        title={t("profile.followersList")}
+        userId={userData?.userId}
       />
 
       <ListUserFlow
         open={isFollowingModalOpen}
         onClose={() => setIsFollowingModalOpen(false)}
         type="following"
-        title={t("profile.following")}
-        userId={userData?.userId} // Add userId
+        title={t("profile.followingList")}
+        userId={userData?.userId}
       />
 
       <Modal

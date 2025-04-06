@@ -22,7 +22,7 @@ const Friend = () => {
             if (result.status === 200 && result.data && result.data.content) {
                 setUsers(result.data.content);
             } else {
-                setUsers([]); // Xử lý khi không có dữ liệu
+                setUsers([]);
             }
         } catch (error) {
             console.error("Error fetching users:", error);

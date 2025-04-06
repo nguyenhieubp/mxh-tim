@@ -1,0 +1,17 @@
+{
+  "createPost": {
+    "title": "Tạo bài viết mới",
+    "uploadImages": "Tải ảnh lên",
+    "dragAndDrop": "Kéo và thả ảnh hoặc nhấp để chọn",
+    "captionPlaceholder": "Viết gì đó về bài viết của bạn...",
+    "publicPost": "Công khai bài viết",
+    "privatePost": "Chỉ mình tôi",
+    "allowComments": "Cho phép bình luận",
+    "disableComments": "Tắt bình luận",
+    "cancel": "Hủy",
+    "post": "Đăng",
+    "posting": "Đang đăng...",
+    "successMessage": "Đăng bài viết thành công!",
+    "errorMessage": "Có lỗi xảy ra khi đăng bài viết. Vui lòng thử lại!"
+  }
+} 

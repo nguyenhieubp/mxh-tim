@@ -1,7 +1,6 @@
 "use client";
 
 import ShowItemPost from "./components/ShowItemPost";
-import SearchBar from "./components/SearchBar";
 import PostGrid from "./components/PostGrid";
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";

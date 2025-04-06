@@ -5,7 +5,6 @@ import { List, ListSubheader, Divider, Dialog, DialogTitle, DialogContent, Dialo
 import { useTranslation } from 'react-i18next';
 import LanguageSelector from './components/LanguageSelector';
 import PasswordChange from './components/PasswordChange';
-import ThemeToggle from './components/ThemeToggle';
 import LogoutComponent from './components/LogoutComponent';
 import { useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
@@ -55,12 +54,6 @@ const More = () => {
                         <PasswordChange />
                     </div>
                     <Divider />
-
-                    <div className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                        <ThemeToggle />
-                    </div>
-                    <Divider />
-
                     <div
                         className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"
                     >

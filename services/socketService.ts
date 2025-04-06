@@ -12,26 +12,41 @@ interface CallEvents {
   };
 }
 
+interface NotificationData {
+  actor: string;
+  userId: string;
+  title: string;
+  content: string;
+  data: any;
+}
+
 class SocketService {
   private socket: Socket | null = null;
   private userId: string | null = null;
 
   connect(userId: string) {
     this.userId = userId;
+    console.log(`Attempting to connect socket for user: ${userId}`);
+    
     this.socket = io('http://localhost:3001/chat', {
       query: { userId },
     });
 
     this.socket.on('connect', () => {
-      console.log('Connected to WebSocket server');
+      console.log('Connected to WebSocket server with socket ID:', this.socket?.id);
       // Join user's room on connect
       if (this.socket && this.userId) {
         this.socket.emit('join', this.userId);
+        console.log(`Joined room for user: ${this.userId}`);
       }
     });
 
-    this.socket.on('disconnect', () => {
-      console.log('Disconnected from WebSocket server');
+    this.socket.on('connect_error', (error) => {
+      console.error('Socket connection error:', error);
+    });
+
+    this.socket.on('disconnect', (reason) => {
+      console.log(`Disconnected from WebSocket server. Reason: ${reason}`);
     });
 
     return this.socket;
@@ -81,6 +96,34 @@ class SocketService {
   removeReceiveMessageListener() {
     if (!this.socket) return;
     this.socket.off('receiveMessage');
+  }
+
+  // Notification methods
+  sendNotification(notification: NotificationData) {
+    if (!this.socket || !this.userId) {
+      console.error('Socket not connected or userId not set');
+      return;
+    }
+
+    // Send notification to server
+    this.socket.emit('sendNotification', notification);
+  }
+
+  onReceiveNotification(callback: (notification: any) => void) {
+    if (!this.socket) {
+      console.error('Socket not connected when trying to set up notification listener');
+      return;
+    }
+
+    this.socket.on('receiveNotification', (notification) => {
+      console.log('Received notification:', notification);
+      callback(notification);
+    });
+  }
+
+  removeReceiveNotificationListener() {
+    if (!this.socket) return;
+    this.socket.off('receiveNotification');
   }
 
   // Add method to check connection status

@@ -27,31 +27,46 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const token = localStorage.getItem("token");
 
         if (!token) {
-          router.push("/login");
+          if (pathname.startsWith('/admin')) {
+            router.push("/login");
+            return;
+          }
           return;
         }
 
         const response = await api.get(APIs.auth.me);
         if (response.data?.data) {
+          const user = response.data.data;
+
+          // Nếu đang ở trang login/register và đã đăng nhập
           if (pathname === "/login" || pathname === "/register") {
             router.push("/");
             return;
           }
+
+          // TODO: Uncomment this when ready to implement admin role check
+          // if (pathname.startsWith('/admin') && user.role !== 'admin') {
+          //   router.push("/");
+          //   return;
+          // }
+
           dispatch(getCurrentUser());
-          router.push("/");
-          return;
         } else {
-          router.push("/login");
+          if (pathname.startsWith('/admin')) {
+            router.push("/login");
+          }
         }
       } catch (error) {
-        router.push("/login");
+        if (pathname.startsWith('/admin')) {
+          router.push("/login");
+        }
       } finally {
         setIsLoading(false);
       }
     };
 
     checkAuth();
-  }, [router]);
+  }, [router, pathname]);
 
   return (
     <AuthContext.Provider value={{ isLoading }}>

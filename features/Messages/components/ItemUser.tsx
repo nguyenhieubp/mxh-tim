@@ -101,7 +101,7 @@ const ItemUser: React.FC<ItemUserProps> = ({
         <div className={`text-sm truncate ${
           isOnline ? "text-green-600" : "text-gray-500"
         }`}>
-          {isTemporary ? t("messages.newMessage") : isOnline ? "Online" : "Offline"}
+          {isTemporary ? t("messages.newMessage") : isOnline ? t("messages.status.online") : t("messages.status.offline")}
         </div>
       </div>
 

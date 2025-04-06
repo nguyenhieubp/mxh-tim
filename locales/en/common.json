@@ -1,0 +1,17 @@
+{
+  "createPost": {
+    "title": "Create New Post",
+    "uploadImages": "Upload Images",
+    "dragAndDrop": "Drag and drop images or click to select",
+    "captionPlaceholder": "Write something about your post...",
+    "publicPost": "Public Post",
+    "privatePost": "Only Me",
+    "allowComments": "Allow Comments",
+    "disableComments": "Disable Comments",
+    "cancel": "Cancel",
+    "post": "Post",
+    "posting": "Posting...",
+    "successMessage": "Post created successfully!",
+    "errorMessage": "Error creating post. Please try again!"
+  }
+} 

@@ -11,18 +11,19 @@ interface SideBarItemProps {
 const SideBarItem = ({ href, icon, label, onClick, isActive }: SideBarItemProps) => {
   const className = `
     flex items-center p-3 
-    rounded-xl transition-all duration-200
+    rounded-xl transition-all duration-300
     ${isActive 
-      ? 'bg-gray-100 font-semibold' 
-      : 'hover:bg-gray-50'
+      ? 'bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-600 font-semibold shadow-sm' 
+      : 'hover:bg-gradient-to-r hover:from-indigo-50/50 hover:to-purple-50/50 text-gray-600 hover:text-indigo-600'
     }
     ${onClick ? 'cursor-pointer' : ''}
+    group
   `;
 
   if (href) {
     return (
       <Link href={href} className={className}>
-        <span className={`${isActive ? 'scale-110' : ''} transition-transform`}>
+        <span className={`${isActive ? 'scale-110' : 'group-hover:scale-110'} transition-transform duration-300`}>
           {icon}
         </span>
         <span className="ml-4">{label}</span>
@@ -32,7 +33,7 @@ const SideBarItem = ({ href, icon, label, onClick, isActive }: SideBarItemProps)
 
   return (
     <div onClick={onClick} className={className}>
-      <span className={`${isActive ? 'scale-110' : ''} transition-transform`}>
+      <span className={`${isActive ? 'scale-110' : 'group-hover:scale-110'} transition-transform duration-300`}>
         {icon}
       </span>
       <span className="ml-4">{label}</span>

@@ -20,6 +20,7 @@ import axios from "axios";
 import { getAuthHeaders } from "@/utils/api";
 import { useRouter } from "next/navigation";
 import BookmarkIcon from '@mui/icons-material/Bookmark';
+import socketService from "@/services/socketService";
 
 interface PostModalProps {
   open: boolean;
@@ -186,7 +187,6 @@ const PostModal: React.FC<PostModalProps> = ({
   // Handle posting comments
   const handlePostComment = async () => {
     if (!comment.trim()) return;
-
     try {
       const newComment = {
         userId: userCurrent?.userId,
@@ -201,30 +201,25 @@ const PostModal: React.FC<PostModalProps> = ({
         getAuthHeaders()
       );
 
-      setLocalComments(prev =>
-        parentCommentId ?
-          prev.map(c =>
-            c.commentId === parentCommentId
-              ? { ...c, numberReplyComment: (c.numberReplyComment || 0) + 1 }
-              : c
-          )
-          : [response.data.data, ...prev]
-      );
-
-      if (parentCommentId) {
-        if (!expandedCommentIds.includes(parentCommentId)) {
-          setExpandedCommentIds(prev => [...prev, parentCommentId]);
-        }
-        fetchCommentReplies(parentCommentId);
+      // Gửi thông báo realtime khi comment
+      if (post?.user?.userId !== userCurrent?.userId) {
+        await socketService.sendNotification({
+          actor: userCurrent?.userId || '',
+          userId: post?.user?.userId || '',
+          title: 'New Comment',
+          content: 'commented on your post',
+          data: {
+            type: 'comment',
+            postId: postId,
+            commentContent: comment
+          }
+        });
       }
 
-      // Reset comment input and replying state
+      // Cập nhật UI
+      setLocalComments(prev => [response.data.data, ...prev]);
+      setNumberComments?.(prev => (prev || 0) + 1);
       resetCommentStates();
-
-      // Update comment count if needed
-      if (setNumberComments) {
-        setNumberComments(prev => (prev ?? 0) + 1);
-      }
     } catch (error) {
       console.error("Error posting comment:", error);
     }
