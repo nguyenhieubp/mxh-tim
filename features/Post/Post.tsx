@@ -18,7 +18,7 @@ import BookmarkIcon from '@mui/icons-material/Bookmark';
 import PostModal from "@/components/modals/PostModal";
 import socketService from "@/services/socketService";
 
-export default function ItemPost({ post }: { post: IPost }) {
+export default function Post({ post }: { post: IPost }) {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const [open, setOpen] = React.useState<boolean>(false);
@@ -189,13 +189,13 @@ export default function ItemPost({ post }: { post: IPost }) {
 
   return (
     <>
-      <div className="max-w-[600px] mx-10 mt-2 bg-white rounded-lg shadow">
+      <div key={post?.postId} className="max-w-[600px] mx-10 mt-2 bg-white rounded-lg shadow">
         <InfoUser post={post} />
 
         {/* Post Images with Navigation */}
-        <div className="relative w-full pt-[100%]">
+        <div className="relative w-full">
           <img
-            className="absolute top-0 left-0 w-full h-full object-cover bg-[#efefef]"
+            className="w-full h-auto object-contain bg-[#efefef]"
             src={
               `${process.env.NEXT_PUBLIC_API_URL}${post.mediaUrls?.[currentImageIndex]}` ||
               post.mediaUrls?.[currentImageIndex] ||

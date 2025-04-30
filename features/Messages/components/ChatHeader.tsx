@@ -1,5 +1,6 @@
 import React from 'react';
 import { IUser } from '../Messages';
+import { Avatar } from '@mui/material';
 
 interface ChatHeaderProps {
   user: IUser;
@@ -12,7 +13,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ user, onVideoCall }) => {
       <div className="flex items-center gap-3">
         <div className="h-10 w-10 rounded-full overflow-hidden">
           {user.profilePicture ? (
-            <img
+            <Avatar
               src={user.profilePicture}
               alt={user.username}
               className="h-full w-full object-cover"

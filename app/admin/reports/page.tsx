@@ -1,27 +1,27 @@
 "use client";
 
 import { AdminProvider, useAdmin } from "@/contexts/AdminContext";
-import UserSearch from "../components/UserSearch";
+import ReportedPosts from "../components/ReportedPosts";
 
-function UsersContent() {
+function ReportsContent() {
   const { isAdmin, isLoading } = useAdmin();
 
   if (isLoading || !isAdmin) return null;
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">Quản lý người dùng</h1>
+      <h1 className="text-2xl font-bold mb-4">Bài viết bị báo cáo</h1>
       <div className="space-y-6">
-        <UserSearch />
+        <ReportedPosts />
       </div>
     </div>
   );
 }
 
-export default function UsersPage() {
+export default function ReportsPage() {
   return (
     <AdminProvider>
-      <UsersContent />
+      <ReportsContent />
     </AdminProvider>
   );
-}
+} 

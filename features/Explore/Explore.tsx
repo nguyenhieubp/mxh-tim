@@ -5,6 +5,7 @@ import PostGrid from "./components/PostGrid";
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
+import { IPost } from "@/redux/features/post";
 
 const Explore = () => {
   const { t } = useTranslation();
@@ -31,14 +32,11 @@ const Explore = () => {
       }
 
       setPosts((prevPosts) => {
-        const startIndex = (page - 1) * size;
-        const updatedPosts = [...prevPosts];
-
-        newPosts.forEach((post: any, index: number) => {
-          updatedPosts[startIndex + index] = post;
-        });
-
-        return updatedPosts;
+        const existingPostIds = new Set(prevPosts.map(post => post.postId));
+        
+        const uniqueNewPosts = newPosts.filter((post: IPost) => !existingPostIds.has(post.postId));
+        
+        return [...prevPosts, ...uniqueNewPosts];
       });
     } catch (error) {
       console.error("Error fetching posts:", error);

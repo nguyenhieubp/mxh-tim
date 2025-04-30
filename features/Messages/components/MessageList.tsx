@@ -3,6 +3,7 @@ import { IChatMessage } from "@/features/Messages/message";
 import { formatDistanceToNow } from "date-fns";
 import { IUser } from "../Messages";
 import { useTranslation } from "react-i18next";
+import { Avatar } from "@mui/material";
 
 interface MessageListProps {
   messages: IChatMessage[];
@@ -44,7 +45,7 @@ const MessageList: React.FC<MessageListProps> = ({ messages, chatEndRef, current
   const renderAvatar = (user: IUser) => (
     <div className="flex-shrink-0 h-8 w-8 rounded-full overflow-hidden">
       {user.profilePicture ? (
-        <img
+        <Avatar
           src={user.profilePicture}
           alt={user.username}
           className="h-full w-full object-cover"

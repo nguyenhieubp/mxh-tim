@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAppDispatch } from "@/redux/configs/hooks";
-import { login } from "@/redux/features/auth";
+import { login, getCurrentUser } from "@/redux/features/auth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import AlertSnackbar from "../common/AlertSnackbar";
@@ -39,7 +39,29 @@ const LoginForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      // Đăng nhập
       await dispatch(login(formData)).unwrap();
+      
+      // Lấy thông tin user hiện tại
+      const userResult = await dispatch(getCurrentUser()).unwrap();
+      const userData = userResult?.data;
+      
+      // Kiểm tra role USER
+      const hasUserRole = userData?.roles?.some(
+        (role: string) => role.toLowerCase() === "user"
+      );
+
+      if (!hasUserRole) {
+        setError("Email hoặc mật khẩu không đúng");
+        setAlert({
+          open: true,
+          message: "Email hoặc mật khẩu không đúng",
+          severity: "error",
+        });
+        localStorage.removeItem("token");
+        return;
+      }
+
       setError("");
       setAlert({
         open: true,
@@ -52,10 +74,25 @@ const LoginForm = () => {
     } catch (error: any) {
       if (error?.response?.status === 401) {
         setError("Email hoặc mật khẩu không đúng");
+        setAlert({
+          open: true,
+          message: "Email hoặc mật khẩu không đúng",
+          severity: "error",
+        });
       } else if (error?.response?.status === 404) {
         setError("Không tìm thấy email");
+        setAlert({
+          open: true,
+          message: "Không tìm thấy email",
+          severity: "error",
+        });
       } else {
         setError("Có lỗi xảy ra. Vui lòng thử lại.");
+        setAlert({
+          open: true,
+          message: "Có lỗi xảy ra. Vui lòng thử lại.",
+          severity: "error",
+        });
       }
     }
   };

@@ -20,12 +20,12 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
                 {previewUrls.map((url, index) => (
                     <div
                         key={index}
-                        className="relative aspect-square group overflow-hidden rounded-xl shadow-md hover:shadow-lg transition-all duration-300"
+                        className="relative w-full h-auto group overflow-hidden rounded-xl shadow-md hover:shadow-lg transition-all duration-300"
                     >
                         <img
                             src={url}
                             alt={`Preview ${index}`}
-                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                            className="w-full h-auto object-contain transition-transform duration-300 group-hover:scale-110"
                         />
                         <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                         <button
@@ -39,7 +39,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
                     </div>
                 ))}
 
-                <label className="relative aspect-square cursor-pointer group">
+                <label className="relative w-full h-auto cursor-pointer group">
                     <div className="absolute inset-0 rounded-xl border-2 border-dashed 
                                   border-gray-300 group-hover:border-blue-500 
                                   flex items-center justify-center transition-colors duration-300

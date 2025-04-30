@@ -1,6 +1,6 @@
 import React from "react";
-import Image from "next/image";
 import { useTranslation } from "react-i18next";
+import { Avatar } from "@mui/material";
 
 export interface IUser {
   id: number;
@@ -77,11 +77,9 @@ const ItemUser: React.FC<ItemUserProps> = ({
       onClick={onSelect}
     >
       <div className="relative w-12 h-12 flex-shrink-0">
-        <Image
+        <Avatar
           src={user.profilePicture}
           alt={user.username}
-          width={56}
-          height={56}
           className="w-12 h-12 rounded-full object-cover border-2 border-gray-200 group-hover:border-blue-200 transition-all duration-300"
         />
         {isOnline && (

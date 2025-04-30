@@ -7,14 +7,17 @@ import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "@/redux/configs/hooks";
 import { createPost } from "@/redux/features/post";
 import AlertSnackbar from "@/components/common/AlertSnackbar";
+import { useRouter } from "next/navigation";
 
 interface CreatePostProps {
   setShowCreatePost: (value: boolean) => void;
+  onPostUpdate?: () => void;
 }
 
-const CreatePost: React.FC<CreatePostProps> = ({ setShowCreatePost }) => {
+const CreatePost: React.FC<CreatePostProps> = ({ setShowCreatePost, onPostUpdate }) => {
   const dispath = useAppDispatch();
   const { t } = useTranslation();
+  const router = useRouter();
   const [caption, setCaption] = useState("");
   const [images, setImages] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
@@ -66,6 +69,12 @@ const CreatePost: React.FC<CreatePostProps> = ({ setShowCreatePost }) => {
         message: t("createPost.successMessage"),
         severity: "success",
       });
+
+      // Call onPostUpdate callback to refresh posts list
+      onPostUpdate?.();
+
+      // Navigate to profile page after successful post creation
+      router.push(`/profile/${userId}`);
 
       setTimeout(() => {
         handleClose();

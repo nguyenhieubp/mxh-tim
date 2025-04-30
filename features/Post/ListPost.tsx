@@ -1,15 +1,12 @@
 "use client";
 
-import { useAppDispatch, useAppSelector } from "@/redux/configs/hooks";
 import Post from "./Post";
 import SideBar from "../SideBar/SideBar";
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { fetchPosts, IPost } from "@/redux/features/post";
+import {  IPost } from "@/redux/features/post";
 import axios from "axios";
 
 export default function ListPost() {
-  const dispatch = useAppDispatch();
-  const posts = useAppSelector((state) => state.posts.posts);
   const [localPosts, setLocalPosts] = useState<any[]>([]);
   const [page, setPage] = useState(1);
   const [size] = useState(3);
@@ -68,7 +65,7 @@ export default function ListPost() {
       <SideBar>
         <div className="max-w-[800px] mx-auto">
           {localPosts.map((post: IPost, index: number) => (
-            <div key={post.postId}>
+            <div key={`${post.postId}-${index}`}>
               <Post post={post} />
               {index === localPosts.length - 1 && (
                 <div ref={lastPostRef} className="text-center p-4">

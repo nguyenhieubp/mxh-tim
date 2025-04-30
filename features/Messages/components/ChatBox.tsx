@@ -11,6 +11,7 @@ import axios from "axios";
 import { api } from "@/configs/apis/request";
 import { formatDistanceToNow } from "date-fns";
 import VideoCall from "./VideoCall";
+import { Avatar } from "@mui/material";
 
 export interface IUser {
   id: number;
@@ -264,7 +265,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ user, onMessageSent }): JSX.Element =
           <div className="text-center max-w-md mx-auto">
             <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gray-100 flex items-center justify-center mb-4 mx-auto">
               {user.profilePicture ? (
-                <img
+                <Avatar
                   src={user.profilePicture}
                   alt={user.username}
                   className="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover"

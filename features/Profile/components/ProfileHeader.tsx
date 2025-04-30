@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { api } from "@/configs/apis/request";
 import Image from "next/image";
 import ListUserFlow from "@/components/modals/ListUserFlow";
-import { Modal } from "@mui/material";
+import { Avatar, Modal } from "@mui/material";
 import { useAppSelector } from "@/redux/configs/hooks";
 import { selectCurrentUser } from "@/redux/features/auth";
 import Link from "next/link";
@@ -35,7 +35,6 @@ const ProfileHeader = ({ user }: { user: IUser | undefined }) => {
   const userMe = useAppSelector(selectCurrentUser);
 
   const isMe = userMe?.userId === id;
-
 
   const handleEditProfile = useCallback(() => {
     setIsEditModalOpen(true);
@@ -74,24 +73,26 @@ const ProfileHeader = ({ user }: { user: IUser | undefined }) => {
       setFollowers(response.data);
     } catch (error) {
       console.error("Error fetching followers list:", error);
-
     }
   }, [userData]);
 
-  const handleSaveProfile = useCallback((updatedUser: {
-    username: string;
-    profilePicture: string | null;
-    bio: string | null;
-  }) => {
-    if (!userData) return;
+  const handleSaveProfile = useCallback(
+    (updatedUser: {
+      username: string;
+      profilePicture: string | null;
+      bio: string | null;
+    }) => {
+      if (!userData) return;
 
-    setUserData({
-      ...userData,
-      username: updatedUser.username,
-      profilePicture: updatedUser.profilePicture,
-      bio: updatedUser.bio,
-    });
-  }, [userData]);
+      setUserData({
+        ...userData,
+        username: updatedUser.username,
+        profilePicture: updatedUser.profilePicture,
+        bio: updatedUser.bio,
+      });
+    },
+    [userData]
+  );
 
   const [isFollowing, setIsFollowing] = useState(false);
 
@@ -132,11 +133,7 @@ const ProfileHeader = ({ user }: { user: IUser | undefined }) => {
         setIsFollowing(true);
       }
 
-      await Promise.all([
-        getFollowers(),
-        getFollowing()
-      ]);
-
+      await Promise.all([getFollowers(), getFollowing()]);
     } catch (error) {
       console.error("Error toggling follow:", error);
     }
@@ -144,8 +141,7 @@ const ProfileHeader = ({ user }: { user: IUser | undefined }) => {
 
   const handleMessageClick = useCallback(async () => {
     if (!userData) return;
-    
-    // Only navigate to messages page without creating a conversation
+
     router.push(`/messages/${userData.userId}`);
   }, [userData, router]);
 
@@ -157,16 +153,14 @@ const ProfileHeader = ({ user }: { user: IUser | undefined }) => {
             className="p-1 bg-gradient-to-br from-pink-500 to-yellow-500 rounded-full cursor-pointer"
             onClick={() => setIsAvatarModalOpen(true)}
           >
-            <Image
-              width={100}
-              height={100}
-              alt={userData?.username || "avatarUser"}
+            <Avatar
               src={
                 userData?.profilePicture
                   ? `${process.env.NEXT_PUBLIC_API_URL}${userData?.profilePicture}`
                   : "/default-post-image.jpg"
               }
-              className="border-2 border-white rounded-full object-cover w-[6rem] h-[6rem]"
+              alt={userData?.username || "avatarUser"}
+              sx={{ width: 60, height: 60 }}
             />
           </div>
         </div>

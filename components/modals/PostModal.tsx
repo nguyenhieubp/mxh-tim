@@ -1,6 +1,20 @@
-import { IconButton, Modal, Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, FormControl, InputLabel, Select } from "@mui/material";
 import {
-  FavoriteBorder,
+  IconButton,
+  Modal,
+  Menu,
+  MenuItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  Avatar,
+} from "@mui/material";
+import {
   ChatBubbleOutline,
   Send,
   BookmarkBorder,
@@ -21,7 +35,7 @@ import moment from "moment";
 import axios from "axios";
 import { getAuthHeaders } from "@/utils/api";
 import { useRouter } from "next/navigation";
-import BookmarkIcon from '@mui/icons-material/Bookmark';
+import BookmarkIcon from "@mui/icons-material/Bookmark";
 import socketService from "@/services/socketService";
 import AlertSnackbar from "@/components/common/AlertSnackbar";
 
@@ -93,43 +107,56 @@ const PostModal: React.FC<PostModalProps> = ({
   const [loading, setLoading] = React.useState(false);
   const [hasMore, setHasMore] = React.useState(true);
   const commentInputRef = React.useRef<HTMLInputElement | null>(null);
-  const [commentReplies, setCommentReplies] = React.useState<{ [commentId: string]: any[] }>({});
+  const [commentReplies, setCommentReplies] = React.useState<{
+    [commentId: string]: any[];
+  }>({});
   const [comment, setComment] = React.useState("");
   const [replyingTo, setReplyingTo] = React.useState<string | null>(null);
-  const [parentCommentId, setParentCommentId] = React.useState<string | null>(null);
+  const [parentCommentId, setParentCommentId] = React.useState<string | null>(
+    null
+  );
   const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
-  const [expandedCommentIds, setExpandedCommentIds] = React.useState<string[]>([]);
+  const [expandedCommentIds, setExpandedCommentIds] = React.useState<string[]>(
+    []
+  );
   const [currentPage, setCurrentPage] = React.useState(1);
-  const hasLiked = likes?.some((like) => like.user.userId === userCurrent?.userId);
+  const hasLiked = likes?.some(
+    (like) => like.user.userId === userCurrent?.userId
+  );
 
   // Add new state for report functionality
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [openReportDialog, setOpenReportDialog] = React.useState(false);
-  const [reason, setReason] = React.useState('');
-  const [description, setDescription] = React.useState('');
+  const [reason, setReason] = React.useState("");
+  const [description, setDescription] = React.useState("");
   const [alert, setAlert] = React.useState({
     open: false,
-    message: '',
-    severity: 'success' as 'success' | 'error' | 'warning' | 'info'
+    message: "",
+    severity: "success" as "success" | "error" | "warning" | "info",
   });
 
-  const fetchComments = React.useCallback(async (page: number) => {
-    setLoading(true);
-    try {
-      const pageSize = 3;
-      const { data } = await axios.get(
-        `${process.env.NEXT_PUBLIC_SERVER}/comment/${postId}/all?page=${page}&size=${pageSize}`,
-        getAuthHeaders()
-      );
-      const newComments = data.data.content;
-      setLocalComments(prev => (page === 1 ? newComments : [...prev, ...newComments]));
-      setHasMore(newComments.length > 0);
-    } catch (error) {
-      console.error("Error fetching comments:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [postId]);
+  const fetchComments = React.useCallback(
+    async (page: number) => {
+      setLoading(true);
+      try {
+        const pageSize = 3;
+        const { data } = await axios.get(
+          `${process.env.NEXT_PUBLIC_SERVER}/comment/${postId}/all?page=${page}&size=${pageSize}`,
+          getAuthHeaders()
+        );
+        const newComments = data.data.content;
+        setLocalComments((prev) =>
+          page === 1 ? newComments : [...prev, ...newComments]
+        );
+        setHasMore(newComments.length > 0);
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [postId]
+  );
 
   const fetchCommentReplies = async (commentId: string) => {
     try {
@@ -137,7 +164,13 @@ const PostModal: React.FC<PostModalProps> = ({
         `${process.env.NEXT_PUBLIC_SERVER}/comment/${commentId}/getAllCommentReply`,
         getAuthHeaders()
       );
-      setCommentReplies(prev => ({ ...prev, [commentId]: data.data.content }));
+
+      if (data && data.data && Array.isArray(data.data.content)) {
+        setCommentReplies((prev) => ({
+          ...prev,
+          [commentId]: data.data.content,
+        }));
+      }
     } catch (error) {
       console.error("Error fetching replies:", error);
     }
@@ -160,11 +193,10 @@ const PostModal: React.FC<PostModalProps> = ({
     setParentCommentId(null);
   };
 
-
   const handleToggleReply = (commentId: string) => {
-    setExpandedCommentIds(prev => {
+    setExpandedCommentIds((prev) => {
       if (prev.includes(commentId)) {
-        return prev.filter(id => id !== commentId);
+        return prev.filter((id) => id !== commentId);
       }
       fetchCommentReplies(commentId);
       return [...prev, commentId];
@@ -176,14 +208,17 @@ const PostModal: React.FC<PostModalProps> = ({
     setReplyingTo(username);
     setComment(`@${username} `);
     setParentCommentId(commentId);
-    commentInputRef.current?.focus();
+    if (commentInputRef.current) {
+      commentInputRef.current.focus();
+    }
   };
 
   // Handle image navigation
   const handleImageNavigation = (direction: "prev" | "next") => {
-    setCurrentImageIndex(prev => {
+    setCurrentImageIndex((prev) => {
       if (direction === "prev" && prev > 0) return prev - 1;
-      if (direction === "next" && prev < (post?.mediaUrls?.length ?? 1) - 1) return prev + 1;
+      if (direction === "next" && prev < (post?.mediaUrls?.length ?? 1) - 1)
+        return prev + 1;
       return prev;
     });
   };
@@ -196,7 +231,6 @@ const PostModal: React.FC<PostModalProps> = ({
       setCurrentPage(nextPage);
     }
   };
-
 
   // Handle posting comments
   const handlePostComment = async () => {
@@ -215,24 +249,56 @@ const PostModal: React.FC<PostModalProps> = ({
         getAuthHeaders()
       );
 
-      // Gửi thông báo realtime khi comment
+      // If this is a reply, update the replies state
+      if (parentCommentId) {
+        setCommentReplies((prev) => ({
+          ...prev,
+          [parentCommentId]: [...(prev[parentCommentId] || []), response.data.data]
+        }));
+
+        // Update the number of replies for the parent comment
+        setLocalComments((prev) =>
+          prev.map((comment) =>
+            comment.commentId === parentCommentId
+              ? {
+                ...comment,
+                numberReplyComment: (comment.numberReplyComment || 0) + 1,
+              }
+              : comment
+          )
+        );
+
+        // Tự động mở phần replies nếu chưa mở
+        setExpandedCommentIds((prev) => {
+          if (!prev.includes(parentCommentId)) {
+            return [...prev, parentCommentId];
+          }
+          return prev;
+        });
+      } else {
+        // If it's a top-level comment, add to localComments
+        setLocalComments((prev) => [...prev, response.data.data]);
+      }
+
+      // Update total comment count
+      setNumberComments?.((prev) => (prev || 0) + 1);
+
+      // Send notification if commenting on someone else's post
       if (post?.user?.userId !== userCurrent?.userId) {
         await socketService.sendNotification({
-          actor: userCurrent?.userId || '',
-          userId: post?.user?.userId || '',
-          title: 'New Comment',
-          content: 'commented on your post',
+          actor: userCurrent?.userId || "",
+          userId: post?.user?.userId || "",
+          title: "New Comment",
+          content: parentCommentId ? "replied to a comment" : "commented on your post",
           data: {
-            type: 'comment',
+            type: "comment",
             postId: postId,
-            commentContent: comment
-          }
+            commentContent: comment,
+            parentCommentId,
+          },
         });
       }
 
-      // Cập nhật UI
-      setLocalComments(prev => [response.data.data, ...prev]);
-      setNumberComments?.(prev => (prev || 0) + 1);
       resetCommentStates();
     } catch (error) {
       console.error("Error posting comment:", error);
@@ -258,45 +324,48 @@ const PostModal: React.FC<PostModalProps> = ({
 
   const handleReportClose = () => {
     setOpenReportDialog(false);
-    setReason('');
-    setDescription('');
+    setReason("");
+    setDescription("");
   };
 
   const handleReportSubmit = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER}/post/${post?.postId}/report`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: userCurrent?.userId,
-          reason,
-          description
-        }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER}/post/${post?.postId}/report`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: userCurrent?.userId,
+            reason,
+            description,
+          }),
+        }
+      );
 
       const result = await response.json();
       if (result.status === 201) {
         handleReportClose();
         setAlert({
           open: true,
-          message: 'Báo cáo bài viết thành công',
-          severity: 'success'
+          message: "Báo cáo bài viết thành công",
+          severity: "success",
         });
       } else {
         setAlert({
           open: true,
-          message: result.message || 'Có lỗi xảy ra khi báo cáo',
-          severity: 'error'
+          message: result.message || "Có lỗi xảy ra khi báo cáo",
+          severity: "error",
         });
       }
     } catch (error) {
-      console.error('Error reporting post:', error);
+      console.error("Error reporting post:", error);
       setAlert({
         open: true,
-        message: 'Có lỗi xảy ra khi báo cáo',
-        severity: 'error'
+        message: "Có lỗi xảy ra khi báo cáo",
+        severity: "error",
       });
     }
   };
@@ -314,12 +383,12 @@ const PostModal: React.FC<PostModalProps> = ({
           <IconButton
             onClick={onClose}
             sx={{
-              backgroundColor: 'white',
-              '&:hover': {
-                backgroundColor: '#f3f4f6',
+              backgroundColor: "white",
+              "&:hover": {
+                backgroundColor: "#f3f4f6",
               },
-              boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
-              padding: '8px',
+              boxShadow: "0 1px 3px rgba(0,0,0,0.12)",
+              padding: "8px",
             }}
           >
             <ClearSharp sx={{ fontSize: 20 }} />
@@ -328,83 +397,130 @@ const PostModal: React.FC<PostModalProps> = ({
         {showNavigation && (
           <>
             <div className="absolute left-[-7rem] top-1/2 transform -translate-y-1/2">
-              <IconButton sx={{
-                backgroundColor: 'white',
-                '&:hover': {
-                  backgroundColor: '#f3f4f6',
-                },
-                boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
-                padding: '8px',
-              }} onClick={onPrev} disabled={!canPrev} className={`bg-white hover:bg-gray-100 shadow-md ${!canPrev ? "opacity-50 cursor-not-allowed" : ""}`}>
+              <IconButton
+                sx={{
+                  backgroundColor: "white",
+                  "&:hover": {
+                    backgroundColor: "#f3f4f6",
+                  },
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.12)",
+                  padding: "8px",
+                }}
+                onClick={onPrev}
+                disabled={!canPrev}
+                className={`bg-white hover:bg-gray-100 shadow-md ${!canPrev ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+              >
                 <ArrowBackIos />
               </IconButton>
             </div>
             <div className="absolute right-[-7rem] top-1/2 transform -translate-y-1/2">
-              <IconButton sx={{
-                backgroundColor: 'white',
-                '&:hover': {
-                  backgroundColor: '#f3f4f6',
-                },
-                boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
-                padding: '8px',
-              }} onClick={onNext} disabled={!canNext} className={`bg-white hover:bg-gray-100 shadow-md ${!canNext ? "opacity-50 cursor-not-allowed" : ""}`}>
+              <IconButton
+                sx={{
+                  backgroundColor: "white",
+                  "&:hover": {
+                    backgroundColor: "#f3f4f6",
+                  },
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.12)",
+                  padding: "8px",
+                }}
+                onClick={onNext}
+                disabled={!canNext}
+                className={`bg-white hover:bg-gray-100 shadow-md ${!canNext ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+              >
                 <ArrowForwardIos />
               </IconButton>
             </div>
           </>
-
         )}
         <div className="bg-white p-4 rounded-lg w-[80rem] h-[90vh]">
           <div className="flex gap-4 h-full w-full relative">
-            <div className="w-[40rem] h-full relative">
-              <Image
-                width={1000}
-                height={1000}
-                className="w-full h-full object-cover"
-                src={post?.mediaUrls?.[currentImageIndex] ? `${process.env.NEXT_PUBLIC_API_URL}${post.mediaUrls[currentImageIndex]}` : "/default-post-image.jpg"}
-                alt={t("post.imageAlt")}
-              />
-              {post?.mediaUrls && post.mediaUrls.length > 1 && (
-                <>
-                  <button
-                    onClick={() => handleImageNavigation("prev")}
-                    className={`absolute left-2 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-1 shadow-md ${currentImageIndex === 0 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-100"}`}
-                    disabled={currentImageIndex === 0}
-                  >
-                    <ArrowBackIos />
-                  </button>
-                  <button
-                    onClick={() => handleImageNavigation("next")}
-                    className={`absolute right-2 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-1 shadow-md ${currentImageIndex === post.mediaUrls.length - 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-100"}`}
-                    disabled={currentImageIndex === post.mediaUrls.length - 1}
-                  >
-                    <ArrowForwardIos />
-                  </button>
-                </>
-              )}
-              {post?.mediaUrls && post.mediaUrls.length > 1 && (
-                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
-                  {post.mediaUrls.map((_, index) => (
-                    <div
-                      key={index}
-                      className={`w-2 h-2 rounded-full ${index === currentImageIndex ? "bg-blue-500" : "bg-gray-300"}`}
-                    />
-                  ))}
+            <div className="w-[40rem] h-full relative flex items-center justify-center bg-gray-100">
+              <div className="relative w-full h-full flex items-center justify-center">
+                <div className="relative w-full h-full flex items-center justify-center">
+                  <Image
+                    width={1000}
+                    height={1000}
+                    className="w-auto h-auto max-w-full max-h-[90vh] object-contain rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl"
+                    src={
+                      post?.mediaUrls?.[currentImageIndex]
+                        ? `${process.env.NEXT_PUBLIC_API_URL}${post.mediaUrls[currentImageIndex]}`
+                        : "/default-post-image.jpg"
+                    }
+                    alt={t("post.imageAlt")}
+                    onLoad={(e) => {
+                      const img = e.target as HTMLImageElement;
+                      const isPortrait = img.naturalHeight > img.naturalWidth;
+                      if (isPortrait) {
+                        img.style.maxHeight = '80vh';
+                        img.style.width = 'auto';
+                        img.style.padding = '1rem';
+                      } else {
+                        img.style.maxHeight = '90vh';
+                        img.style.width = '100%';
+                        img.style.padding = '0';
+                      }
+                    }}
+                  />
                 </div>
-              )}
+                {post?.mediaUrls && post.mediaUrls.length > 1 && (
+                  <>
+                    <button
+                      onClick={() => handleImageNavigation("prev")}
+                      className={`absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white 
+                                rounded-full p-2 shadow-lg transition-all duration-300 hover:scale-110
+                                ${currentImageIndex === 0
+                          ? "opacity-50 cursor-not-allowed"
+                          : "hover:shadow-xl"
+                        }`}
+                      disabled={currentImageIndex === 0}
+                    >
+                      <ArrowBackIos className="w-6 h-6" />
+                    </button>
+                    <button
+                      onClick={() => handleImageNavigation("next")}
+                      className={`absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white 
+                                rounded-full p-2 shadow-lg transition-all duration-300 hover:scale-110
+                                ${currentImageIndex === post.mediaUrls.length - 1
+                          ? "opacity-50 cursor-not-allowed"
+                          : "hover:shadow-xl"
+                        }`}
+                      disabled={currentImageIndex === post.mediaUrls.length - 1}
+                    >
+                      <ArrowForwardIos className="w-6 h-6" />
+                    </button>
+                  </>
+                )}
+                {post?.mediaUrls && post.mediaUrls.length > 1 && (
+                  <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-2 bg-white/80 px-4 py-2 rounded-full shadow-lg">
+                    {post.mediaUrls.map((_, index) => (
+                      <div
+                        key={index}
+                        className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${index === currentImageIndex
+                            ? "bg-blue-500 scale-125"
+                            : "bg-gray-300 hover:bg-gray-400"
+                          }`}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="w-[40rem] h-full">
               <div className="border-b-2 border-gray-200 p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <Image
-                      src={`${process.env.NEXT_PUBLIC_API_URL}${post?.user?.profilePicture}` || "/default-post-image.jpg"}
-                      width={100}
-                      height={100}
-                      onClick={() => handleNavigateToProfile(post?.user?.userId)}
+                    <Avatar
+                      src={
+                        `${post?.user?.profilePicture ? `${process.env.NEXT_PUBLIC_API_URL}${post?.user?.profilePicture}` : "/default-image.jpg"}`
+                      }
+                      onClick={() =>
+                        handleNavigateToProfile(post?.user?.userId)
+                      }
+                      alt={post?.user.username}
                       className="w-8 h-8 rounded-full cursor-pointer"
-                      alt={""}
                     />
                     <span className="font-semibold">{post?.user.username}</span>
                   </div>
@@ -417,16 +533,20 @@ const PostModal: React.FC<PostModalProps> = ({
               <div className="h-[24rem] overflow-y-auto scrollbar-hide p-4">
                 {post?.content && (
                   <div className="flex gap-3 mb-4">
-                    <Image
-                      src={`${process.env.NEXT_PUBLIC_API_URL}${post?.user?.profilePicture}` || "/default-image.jpg"}
-                      width={100}
-                      height={100}
-                      onClick={() => handleNavigateToProfile(post?.user?.userId)}
+                    <Avatar
+                      src={
+                        `${post?.user?.profilePicture ? `${process.env.NEXT_PUBLIC_API_URL}${post?.user?.profilePicture}` : "/default-image.jpg"}`
+                      }
+                      onClick={() =>
+                        handleNavigateToProfile(post?.user?.userId)
+                      }
                       alt={post.user.username}
                       className="w-8 h-8 rounded-full cursor-pointer"
                     />
                     <div>
-                      <span className="font-semibold mr-2">{post.user.username}</span>
+                      <span className="font-semibold mr-2">
+                        {post.user.username}
+                      </span>
                       <span>{post.content}</span>
                     </div>
                   </div>
@@ -434,26 +554,40 @@ const PostModal: React.FC<PostModalProps> = ({
 
                 <div>
                   {localComments.map((comment) => (
-                    <div key={comment.commentId} className="flex flex-col gap-3 mb-4">
+                    <div
+                      key={comment.commentId}
+                      className="flex flex-col gap-3 mb-4"
+                    >
                       <div className="flex gap-3">
-                        <Image
-                          width={100}
-                          height={100}
-                          src={`${process.env.NEXT_PUBLIC_API_URL}${comment.user.profilePicture}` || "/default-image.jpg"}
+                        <Avatar
+                          src={
+                            `${comment.user.profilePicture ? `${process.env.NEXT_PUBLIC_API_URL}${comment.user.profilePicture}` : "/default-image.jpg"}`
+                          }
                           alt={comment.user.username}
-                          onClick={() => handleNavigateToProfile(comment.user.userId)}
+                          onClick={() =>
+                            handleNavigateToProfile(comment.user.userId)
+                          }
                           className="w-8 h-8 rounded-full object-cover cursor-pointer"
                         />
                         <div className="flex-1">
                           <div className="text-sm">
-                            <span className="font-semibold mr-2 hover:text-gray-500 cursor-pointer">{comment.user.username}</span>
-                            <span className="text-gray-900">{comment.content}</span>
+                            <span className="font-semibold mr-2 hover:text-gray-500 cursor-pointer">
+                              {comment.user.username}
+                            </span>
+                            <span className="text-gray-900">
+                              {comment.content}
+                            </span>
                           </div>
                           <div className="flex gap-4 mt-1 text-xs text-gray-500">
                             <span>{moment(comment.createdAt).fromNow()}</span>
                             <span
                               className="font-semibold cursor-pointer"
-                              onClick={() => handleReplyClick(comment.user.username, comment.commentId)}
+                              onClick={() =>
+                                handleReplyClick(
+                                  comment.user.username,
+                                  comment.commentId
+                                )
+                              }
                             >
                               Reply
                             </span>
@@ -462,10 +596,14 @@ const PostModal: React.FC<PostModalProps> = ({
                           {comment.numberReplyComment > 0 && (
                             <div
                               className="mt-2 flex items-center gap-2 cursor-pointer text-[0.75rem] text-gray-500 hover:text-gray-700 transition duration-200"
-                              onClick={() => handleToggleReply(comment.commentId)}
+                              onClick={() =>
+                                handleToggleReply(comment.commentId)
+                              }
                             >
                               <div className="w-12 border-t border-gray-300"></div>
-                              <span className="font-semibold">{comment.numberReplyComment} replies</span>
+                              <span className="font-semibold">
+                                {comment.numberReplyComment} replies
+                              </span>
                             </div>
                           )}
                         </div>
@@ -473,25 +611,32 @@ const PostModal: React.FC<PostModalProps> = ({
                       <div>
                         {expandedCommentIds.includes(comment.commentId) && (
                           <div className="ml-12 space-y-4">
-                            {Array.isArray(commentReplies[comment.commentId]) && commentReplies[comment.commentId]?.map(reply => (
-                              <div key={reply.id} className="flex gap-3">
-                                <Image
-                                  onClick={() => handleNavigateToProfile(reply.user.userId)}
-                                  width={100}
-                                  height={100}
-                                  src={`${process.env.NEXT_PUBLIC_API_URL}${reply.user.profilePicture}`}
+                            {commentReplies[comment.commentId]?.map((reply) => (
+                              <div key={reply.commentId} className="flex gap-3">
+                                <Avatar
+                                  onClick={() =>
+                                    handleNavigateToProfile(reply.user.userId)
+                                  }
+                                  src={`${reply.user.profilePicture ? `${process.env.NEXT_PUBLIC_API_URL}${reply.user.profilePicture}` : "/default-image.jpg"}`}
                                   alt={reply.user.username}
                                   className="w-8 h-8 rounded-full object-cover cursor-pointer"
                                 />
                                 <div className="flex-1">
                                   <div className="text-sm">
-                                    <span className="font-semibold mr-2 hover:text-gray-500 cursor-pointer">{reply.user.username}</span>
+                                    <span className="font-semibold mr-2 hover:text-gray-500 cursor-pointer">
+                                      {reply.user.username}
+                                    </span>
                                     <span className="text-gray-900">{reply.content}</span>
                                   </div>
                                   <div className="flex gap-4 mt-1 text-xs text-gray-500">
                                     <span>{moment(reply.createdAt).fromNow()}</span>
                                     <span
-                                      onClick={() => handleReplyClick(comment.user.username, comment.commentId)}
+                                      onClick={() =>
+                                        handleReplyClick(
+                                          reply.user.username,
+                                          comment.commentId
+                                        )
+                                      }
                                       className="font-semibold cursor-pointer"
                                     >
                                       Reply
@@ -500,12 +645,6 @@ const PostModal: React.FC<PostModalProps> = ({
                                 </div>
                               </div>
                             ))}
-                            <div
-                              className="text-gray-500 text-sm italic cursor-pointer"
-                              onClick={() => handleToggleReply(comment.commentId)}
-                            >
-                              {t("comment.endOfReplies")}
-                            </div>
                           </div>
                         )}
                       </div>
@@ -526,16 +665,25 @@ const PostModal: React.FC<PostModalProps> = ({
               <div className="p-2 border-t-2 border-gray-200">
                 <div className="flex items-center justify-between">
                   <div className="flex gap-4">
-                    <IconButton color={hasLiked ? "error" : "default"} onClick={handleLike}>
+                    <IconButton
+                      color={hasLiked ? "error" : "default"}
+                      onClick={handleLike}
+                    >
                       <Favorite />
                     </IconButton>
-                    <IconButton onClick={() => commentInputRef.current?.focus()}>
+                    <IconButton
+                      onClick={() => commentInputRef.current?.focus()}
+                    >
                       <ChatBubbleOutline />
                     </IconButton>
                   </div>
                   <div>
                     <IconButton onClick={handleShare}>
-                      {isShared ? <BookmarkIcon className="text-yellow-500" /> : <BookmarkBorder />}
+                      {isShared ? (
+                        <BookmarkIcon className="text-yellow-500" />
+                      ) : (
+                        <BookmarkBorder />
+                      )}
                     </IconButton>
                   </div>
                 </div>
@@ -547,7 +695,8 @@ const PostModal: React.FC<PostModalProps> = ({
                 <div className="mt-4 flex items-center gap-2">
                   {replyingTo && (
                     <>
-                      Replying to <span className="font-semibold">{replyingTo}</span>
+                      Replying to{" "}
+                      <span className="font-semibold">{replyingTo}</span>
                       <IconButton
                         size="small"
                         onClick={() => resetCommentStates()}
@@ -614,7 +763,9 @@ const PostModal: React.FC<PostModalProps> = ({
                   onChange={(e) => setReason(e.target.value)}
                 >
                   <MenuItem value="SPAM">Spam</MenuItem>
-                  <MenuItem value="INAPPROPRIATE">Nội dung không phù hợp</MenuItem>
+                  <MenuItem value="INAPPROPRIATE">
+                    Nội dung không phù hợp
+                  </MenuItem>
                   <MenuItem value="HARASSMENT">Quấy rối</MenuItem>
                   <MenuItem value="VIOLENCE">Bạo lực</MenuItem>
                   <MenuItem value="OTHER">Khác</MenuItem>

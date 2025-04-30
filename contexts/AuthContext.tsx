@@ -1,22 +1,24 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
-import { api } from "@/configs/apis/request";
-import { APIs } from "@/configs/apis/listAPI";
-import { getAuthHeaders } from "@/utils/api";
-import { use } from "i18next";
+import { useRouter, usePathname } from "next/navigation";
 import { useAppDispatch } from "@/redux/configs/hooks";
 import { getCurrentUser } from "@/redux/features/auth";
 
 interface AuthContextType {
   isLoading: boolean;
+  isUser: boolean;
+  user: any | null;
 }
 
 const AuthContext = createContext<AuthContextType>({
   isLoading: true,
+  isUser: false,
+  user: null
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
+  const [isUser, setIsUser] = useState(false);
+  const [user, setUser] = useState<any | null>(null);
   const router = useRouter();
   const pathname = usePathname();
   const dispatch = useAppDispatch();
@@ -26,39 +28,59 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       try {
         const token = localStorage.getItem("token");
 
-        if (!token) {
-          if (pathname.startsWith('/admin')) {
-            router.push("/login");
-            return;
-          }
+        // Nếu là route admin, không cần kiểm tra
+        if (pathname.startsWith('/admin')) {
+          setIsLoading(false);
           return;
         }
 
-        const response = await api.get(APIs.auth.me);
-        if (response.data?.data) {
-          const user = response.data.data;
+        // Nếu không có token và không phải trang auth (login/register)
+        if (!token && pathname !== '/login' && pathname !== '/register' && pathname !== '/forgot-password') {
+          setIsLoading(false);
+          router.replace("/login");
+          return;
+        }
 
-          // Nếu đang ở trang login/register và đã đăng nhập
-          if (pathname === "/login" || pathname === "/register") {
-            router.push("/");
+        // Nếu không có token và là trang auth, không cần kiểm tra user
+        if (!token) {
+          setIsLoading(false);
+          return;
+        }
+
+        try {
+          // Lấy thông tin user hiện tại
+          const userResult = await dispatch(getCurrentUser()).unwrap();
+          const userData = userResult?.data;
+
+          // Nếu không có user data
+          if (!userData) {
+            localStorage.removeItem("token");
+            setIsLoading(false);
+            if (pathname !== '/login' && pathname !== '/register' && pathname !== '/forgot-password') {
+              router.replace("/login");
+            }
             return;
           }
 
-          // TODO: Uncomment this when ready to implement admin role check
-          // if (pathname.startsWith('/admin') && user.role !== 'admin') {
-          //   router.push("/");
-          //   return;
-          // }
+          setUser(userData);
+          
+          // Kiểm tra role USER
+          const hasUserRole = userData.roles?.some(
+            (role: string) => role.toLowerCase() === "user"
+          );
+          setIsUser(hasUserRole);
 
-          dispatch(getCurrentUser());
-        } else {
-          if (pathname.startsWith('/admin')) {
-            router.push("/login");
+          // Nếu không phải user và không phải trang auth, chuyển hướng về login
+          if (!hasUserRole && pathname !== '/login' && pathname !== '/register' && pathname !== '/forgot-password') {
+            localStorage.removeItem("token");
+            router.replace("/login");
           }
-        }
-      } catch (error) {
-        if (pathname.startsWith('/admin')) {
-          router.push("/login");
+
+        } catch (error) {
+          localStorage.removeItem("token");
+          if (pathname !== '/login' && pathname !== '/register' && pathname !== '/forgot-password') {
+            router.replace("/login");
+          }
         }
       } finally {
         setIsLoading(false);
@@ -66,10 +88,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     checkAuth();
-  }, [router, pathname]);
+  }, [pathname, router, dispatch]);
 
   return (
-    <AuthContext.Provider value={{ isLoading }}>
+    <AuthContext.Provider value={{ isLoading, isUser, user }}>
       {!isLoading && children}
     </AuthContext.Provider>
   );

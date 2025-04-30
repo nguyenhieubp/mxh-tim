@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import { 
   Box, 
   List, 
@@ -12,14 +13,19 @@ import {
   AppBar,
   Toolbar,
   Typography,
-  IconButton
+  IconButton,
+  Divider,
+  Button
 } from '@mui/material';
 import { 
   Dashboard, 
   People, 
   ReportProblem,
-  Menu as MenuIcon
+  Menu as MenuIcon,
+  Logout
 } from '@mui/icons-material';
+import { AdminProvider, useAdmin } from "@/contexts/AdminContext";
+import LoginForm from './login/page';
 import UserStats from './components/UserStats';
 import UserChart from './components/UserChart';
 import UserSearch from './components/UserSearch';
@@ -27,32 +33,42 @@ import ReportedPosts from './components/ReportedPosts';
 
 const drawerWidth = 240;
 
-const AdminLayout = () => {
-  const [activeTab, setActiveTab] = useState(0);
+const menuItems = [
+  { text: 'Thống kê', icon: <Dashboard />, path: '/admin' },
+  { text: 'Quản lý người dùng', icon: <People />, path: '/admin/users' },
+  { text: 'Bài viết bị báo cáo', icon: <ReportProblem />, path: '/admin/reports' }
+];
+
+function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
+  const { isAdmin, isLoading, user, logout } = useAdmin();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
-  const menuItems = [
-    { text: 'Thống kê', icon: <Dashboard />, component: (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <UserStats />
-        <UserChart />
+  const handleLogout = () => {
+    logout();
+  };
+
+  const getCurrentTitle = () => {
+    const currentItem = menuItems.find(item => item.path === pathname);
+    return currentItem?.text || 'Admin Dashboard';
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
-    )},
-    { text: 'Quản lý người dùng', icon: <People />, component: (
-      <div className="space-y-6">
-        <UserSearch />
-      </div>
-    )},
-    { text: 'Bài viết bị báo cáo', icon: <ReportProblem />, component: (
-      <div className="space-y-6">
-        <ReportedPosts />
-      </div>
-    )}
-  ];
+    );
+  }
+
+  if (!isAdmin || !user) {
+    return <LoginForm />;
+  }
 
   const drawer = (
     <div>
@@ -62,11 +78,11 @@ const AdminLayout = () => {
         </Typography>
       </Toolbar>
       <List>
-        {menuItems.map((item, index) => (
+        {menuItems.map((item) => (
           <ListItem key={item.text} disablePadding>
             <ListItemButton
-              selected={activeTab === index}
-              onClick={() => setActiveTab(index)}
+              selected={pathname === item.path}
+              onClick={() => router.push(item.path)}
             >
               <ListItemIcon>
                 {item.icon}
@@ -75,6 +91,17 @@ const AdminLayout = () => {
             </ListItemButton>
           </ListItem>
         ))}
+      </List>
+      <Divider />
+      <List>
+        <ListItem disablePadding>
+          <ListItemButton onClick={handleLogout}>
+            <ListItemIcon>
+              <Logout />
+            </ListItemIcon>
+            <ListItemText primary="Đăng xuất" />
+          </ListItemButton>
+        </ListItem>
       </List>
     </div>
   );
@@ -98,9 +125,16 @@ const AdminLayout = () => {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            {menuItems[activeTab].text}
+          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
+            {getCurrentTitle()}
           </Typography>
+          <Button 
+            color="inherit" 
+            startIcon={<Logout />}
+            onClick={handleLogout}
+          >
+            Đăng xuất
+          </Button>
         </Toolbar>
       </AppBar>
 
@@ -113,7 +147,7 @@ const AdminLayout = () => {
           open={mobileOpen}
           onClose={handleDrawerToggle}
           ModalProps={{
-            keepMounted: true, // Better open performance on mobile.
+            keepMounted: true,
           }}
           sx={{
             display: { xs: 'block', sm: 'none' },
@@ -143,10 +177,18 @@ const AdminLayout = () => {
           mt: '64px'
         }}
       >
-        {menuItems[activeTab].component}
+        {children}
       </Box>
     </Box>
   );
-};
+}
 
-export default AdminLayout; 
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <AdminProvider>
+      <AdminLayoutContent>
+        {children}
+      </AdminLayoutContent>
+    </AdminProvider>
+  );
+} 

@@ -317,8 +317,8 @@ const UserProfilePage = ({ userId }: ProfilePageProps) => {
                 }
               }}
             >
-              <Tab label={t("profile.tabs.private")} {...a11yProps(0)} />
-              <Tab label={t("profile.tabs.posts")} {...a11yProps(1)} />
+              <Tab label={t("profile.tabs.posts")} {...a11yProps(0)} />
+              <Tab label={t("profile.tabs.private")} {...a11yProps(1)} />
               <Tab label={t("profile.tabs.saved")} {...a11yProps(2)} />
             </Tabs>
           ) : (
@@ -368,27 +368,27 @@ const UserProfilePage = ({ userId }: ProfilePageProps) => {
         {isMe ? (
           <>
             <CustomTabPanel value={value} index={0}>
-              {isLoading && postPrivate.length === 0 ? (
+              {isLoading && posts.length === 0 ? (
                 <div className="flex justify-center items-center py-16">
                   <CircularProgress />
                 </div>
-              ) : postPrivate.length > 0 ? (
+              ) : posts.length > 0 ? (
                 <PostsGrid
-                  posts={postPrivate}
+                  posts={posts}
                   onPostUpdate={handlePostUpdate}
                 />
               ) : (
                 <div className="flex flex-col items-center justify-center py-16 text-gray-400">
                   <ImageNotSupported sx={{ fontSize: 64, mb: 2 }} />
-                  <p className="text-lg font-medium">Chưa có bài viết riêng tư nào</p>
-                  <p className="text-sm">Những bài viết riêng tư của bạn sẽ xuất hiện ở đây</p>
+                  <p className="text-lg font-medium">Chưa có bài viết nào</p>
+                  <p className="text-sm">Khi bạn chia sẻ ảnh, chúng sẽ xuất hiện trên trang cá nhân của bạn</p>
                 </div>
               )}
-              {hasMorePrivate && !isLoading && (
+              {hasMorePosts && !isLoading && (
                 <div className="text-center mt-6">
                   <Button 
                     variant="contained" 
-                    onClick={() => setPagePrivate((prev) => prev + 1)}
+                    onClick={() => setPagePosts((prev) => prev + 1)}
                     endIcon={<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                     </svg>}
@@ -411,27 +411,27 @@ const UserProfilePage = ({ userId }: ProfilePageProps) => {
               )}
             </CustomTabPanel>
             <CustomTabPanel value={value} index={1}>
-              {isLoading && posts.length === 0 ? (
+              {isLoading && postPrivate.length === 0 ? (
                 <div className="flex justify-center items-center py-16">
                   <CircularProgress />
                 </div>
-              ) : posts.length > 0 ? (
+              ) : postPrivate.length > 0 ? (
                 <PostsGrid
-                  posts={posts}
+                  posts={postPrivate}
                   onPostUpdate={handlePostUpdate}
                 />
               ) : (
                 <div className="flex flex-col items-center justify-center py-16 text-gray-400">
                   <ImageNotSupported sx={{ fontSize: 64, mb: 2 }} />
-                  <p className="text-lg font-medium">Chưa có bài viết nào</p>
-                  <p className="text-sm">Khi bạn chia sẻ ảnh, chúng sẽ xuất hiện trên trang cá nhân của bạn</p>
+                  <p className="text-lg font-medium">Chưa có bài viết riêng tư nào</p>
+                  <p className="text-sm">Những bài viết riêng tư của bạn sẽ xuất hiện ở đây</p>
                 </div>
               )}
-              {hasMorePosts && !isLoading && (
+              {hasMorePrivate && !isLoading && (
                 <div className="text-center mt-6">
                   <Button 
                     variant="contained" 
-                    onClick={() => setPagePosts((prev) => prev + 1)}
+                    onClick={() => setPagePrivate((prev) => prev + 1)}
                     endIcon={<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                     </svg>}
