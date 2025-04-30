@@ -77,7 +77,7 @@ const MessageList: React.FC<MessageListProps> = ({ messages, chatEndRef, current
                 {showAvatar && (
                   <div className="h-6 w-6 sm:h-8 sm:w-8 rounded-full overflow-hidden">
                     {user.profilePicture ? (
-                      <img
+                      <Avatar
                         src={user.profilePicture}
                         alt={user.username}
                         className="h-full w-full object-cover"

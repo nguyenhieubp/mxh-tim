@@ -253,9 +253,6 @@ export default function Post({ post }: { post: IPost }) {
             >
               <ChatBubbleOutlineIcon className="w-6 h-6" />
             </button>
-            <button className="p-2 rounded-full hover:bg-gray-100 text-gray-700">
-              <SendIcon className="w-6 h-6" />
-            </button>
             <button
               onClick={handleShare}
               className={`p-2 rounded-full hover:bg-gray-100 ${isShared ? 'text-yellow-500' : 'text-gray-700'} ml-auto`}
