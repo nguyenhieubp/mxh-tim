@@ -38,6 +38,7 @@ import Link from 'next/link';
 import PostModal from '@/components/modals/PostModal';
 import PostInteractionService from '@/services/postInteraction.service';
 import { getAuthHeaders } from '@/utils/api';
+import { useRouter } from 'next/navigation';
 
 interface Notification {
   _id: string;
@@ -106,6 +107,7 @@ export const NotificationList: React.FC<NotificationListProps> = ({
   const [likes, setLikes] = useState<any[]>([]);
   const [isShared, setIsShared] = useState(false);
   const [shareId, setShareId] = useState<string | null>(null);
+  const router = useRouter();
 
   const postService = PostInteractionService.getInstance();
 
@@ -287,6 +289,15 @@ export const NotificationList: React.FC<NotificationListProps> = ({
     }
   }, [notifications, setShowNotifications]);
 
+  const handleProfileClick = (e: React.MouseEvent, userId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (setShowNotifications) {
+      setShowNotifications(false);
+    }
+    router.push(`/profile/${userId}`);
+  };
+
   return (
     <>
       {notifications.length === 0 && !loading && (
@@ -314,41 +325,91 @@ export const NotificationList: React.FC<NotificationListProps> = ({
               '&:hover': {
                 bgcolor: 'action.selected',
               },
-              transition: 'background-color 0.2s',
-              cursor: 'pointer'
+              transition: 'all 0.2s',
+              cursor: 'pointer',
+              position: 'relative',
+              '&:not(:last-child)::after': {
+                content: '""',
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: '1px',
+                bgcolor: 'divider',
+                opacity: 0.1
+              }
             }}
             onClick={(e) => handleNotificationClick(notification, e)}
           >
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%' }}>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, width: '100%' }}>
               <Badge
                 color="error"
                 variant="dot"
                 invisible={notification.isRead}
-                sx={{ mr: 1 }}
+                sx={{ 
+                  mr: 1,
+                  '& .MuiBadge-badge': {
+                    right: 2,
+                    top: 2,
+                    border: '2px solid white'
+                  }
+                }}
               >
                 {userProfiles[notification.actor]?.profilePicture ? (
                   <Avatar 
                     src={`${process.env.NEXT_PUBLIC_API_URL}${userProfiles[notification.actor]?.profilePicture}`}
                     alt={userProfiles[notification.actor]?.username || 'User'}
-                    sx={{ width: 40, height: 40 }}
+                    onClick={(e) => handleProfileClick(e, notification.actor)}
+                    sx={{ 
+                      width: 48, 
+                      height: 48,
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                      border: '2px solid white',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      '&:hover': {
+                        transform: 'scale(1.05)',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                      }
+                    }}
                   />
                 ) : (
-                  <Avatar sx={{ width: 40, height: 40, bgcolor: 'primary.main' }}>
+                  <Avatar 
+                    onClick={(e) => handleProfileClick(e, notification.actor)}
+                    sx={{ 
+                      width: 48, 
+                      height: 48, 
+                      bgcolor: 'primary.main',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                      border: '2px solid white',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      '&:hover': {
+                        transform: 'scale(1.05)',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                      }
+                    }}
+                  >
                     {getNotificationIcon(notification.data?.type || '')}
                   </Avatar>
                 )}
               </Badge>
 
-              <Box sx={{ flex: 1 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Box sx={{ flex: 1, minWidth: 0 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
                   <Typography
                     component="span"
                     variant="body2"
+                    onClick={(e) => handleProfileClick(e, notification.actor)}
                     sx={{
-                      fontWeight: 'bold',
+                      fontWeight: 600,
                       color: 'primary.main',
                       cursor: 'pointer',
-                      '&:hover': { textDecoration: 'underline' }
+                      '&:hover': { textDecoration: 'underline' },
+                      maxWidth: '100%',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap'
                     }}
                   >
                     {userProfiles[notification.actor]?.username || 'Unknown User'}
@@ -356,7 +417,13 @@ export const NotificationList: React.FC<NotificationListProps> = ({
                   <Typography
                     component="span"
                     variant="body2"
-                    sx={{ color: 'text.secondary' }}
+                    sx={{ 
+                      color: 'text.secondary',
+                      maxWidth: '100%',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap'
+                    }}
                   >
                     {notification.content}
                   </Typography>
@@ -366,7 +433,8 @@ export const NotificationList: React.FC<NotificationListProps> = ({
                         sx={{ 
                           fontSize: 16, 
                           color: 'success.main',
-                          ml: 1
+                          ml: 1,
+                          flexShrink: 0
                         }} 
                       />
                     </Tooltip>
@@ -374,13 +442,18 @@ export const NotificationList: React.FC<NotificationListProps> = ({
                 </Box>
                 <Typography
                   variant="caption"
-                  sx={{ color: 'text.secondary', display: 'block', mt: 0.5 }}
+                  sx={{ 
+                    color: 'text.secondary', 
+                    display: 'block', 
+                    mt: 0.5,
+                    fontSize: '0.75rem'
+                  }}
                 >
                   {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
                 </Typography>
               </Box>
               
-              <ListItemSecondaryAction>
+              <ListItemSecondaryAction sx={{ right: 8 }}>
                 <IconButton
                   edge="end"
                   aria-label="delete"
@@ -388,7 +461,13 @@ export const NotificationList: React.FC<NotificationListProps> = ({
                     e.stopPropagation();
                     handleDelete(notification._id);
                   }}
-                  sx={{ color: 'text.secondary' }}
+                  sx={{ 
+                    color: 'text.secondary',
+                    '&:hover': {
+                      color: 'error.main',
+                      bgcolor: 'error.lighter'
+                    }
+                  }}
                 >
                   <DeleteIcon fontSize="small" />
                 </IconButton>

@@ -11,6 +11,7 @@ import { useAppSelector } from "@/redux/configs/hooks";
 import { selectCurrentUser } from "@/redux/features/auth";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import socketService from "@/services/socketService";
 
 interface IUser {
   userId: string;
@@ -131,6 +132,20 @@ const ProfileHeader = ({ user }: { user: IUser | undefined }) => {
           `${process.env.NEXT_PUBLIC_SERVER}/follows/${userMe.userId}/follow/${userData.userId}`
         );
         setIsFollowing(true);
+
+        // Send notification when following
+        if (socketService.isConnected()) {
+          await socketService.sendNotification({
+            actor: userMe.userId,
+            userId: userData.userId,
+            title: 'New Follower',
+            content: 'started following you',
+            data: {
+              type: 'follow',
+              followerId: userMe.userId
+            }
+          });
+        }
       }
 
       await Promise.all([getFollowers(), getFollowing()]);

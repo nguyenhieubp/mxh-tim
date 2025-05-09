@@ -86,10 +86,22 @@ const NotificationComp: React.FC<NotificationCompProps> = ({ setShowNotification
     return (
         <Box
             sx={{
-                width: 400,
-                boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-                borderRadius: '8px',
-                overflow: 'hidden'
+                width: 500,
+                maxWidth: '90vw',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                borderRadius: '12px',
+                overflow: 'hidden',
+                bgcolor: 'background.paper',
+                position: 'relative',
+                '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: '4px',
+                    background: 'linear-gradient(90deg, #3b82f6, #2563eb)',
+                }
             }}
             role="presentation"
             onClick={handleOutsideClick}
@@ -98,7 +110,26 @@ const NotificationComp: React.FC<NotificationCompProps> = ({ setShowNotification
                 onMarkAllAsRead={handleMarkAllAsRead}
                 unreadCount={unreadCount}
             />
-            <List sx={{ p: 0, maxHeight: '400px', overflowY: 'auto' }}>
+            <List 
+                sx={{ 
+                    p: 0, 
+                    maxHeight: '60vh', 
+                    overflowY: 'auto',
+                    '&::-webkit-scrollbar': {
+                        width: '6px',
+                    },
+                    '&::-webkit-scrollbar-track': {
+                        background: 'transparent',
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                        background: 'rgba(0,0,0,0.1)',
+                        borderRadius: '3px',
+                        '&:hover': {
+                            background: 'rgba(0,0,0,0.2)',
+                        }
+                    }
+                }}
+            >
                 <NotificationList 
                     setShowNotifications={setShowNotifications} 
                     isMarkedAsRead={isMarkedAsRead}
