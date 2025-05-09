@@ -173,23 +173,6 @@ const CreatePost: React.FC<CreatePostProps> = ({ setShowCreatePost, onPostUpdate
                 </div>
               }
             />
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={isPublicComment}
-                  onChange={(e) => setIsPublicComment(e.target.checked)}
-                  color="primary"
-                />
-              }
-              label={
-                <div className="flex items-center gap-2">
-                  {isPublicComment ? <LockOpen className="text-blue-500" /> : <Lock className="text-gray-500" />}
-                  <span className="text-sm">
-                    {isPublicComment ? t('createPost.allowComments') : t('createPost.disableComments')}
-                  </span>
-                </div>
-              }
-            />
           </div>
           <ActionButtons
             onClose={handleClose}

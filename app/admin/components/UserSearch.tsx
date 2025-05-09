@@ -168,20 +168,21 @@ const UserSearch = () => {
               Thông tin người dùng
             </DialogTitle>
             <DialogContent>
-              <Box className="flex flex-col items-center p-8">
+              <Box className="flex flex-col items-center p-4 md:p-8">
                 <Avatar
                   src={selectedUser.profilePicture ? `${BASE_URL}${selectedUser.profilePicture}` : "/default-avatar.png"}
                   sx={{
                     width: 150,
                     height: 150,
                     mb: 4,
-                    border: '4px solid #f3f4f6'
+                    border: '4px solid #f3f4f6',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.08)'
                   }}
                 >
                   {selectedUser.username[0]}
                 </Avatar>
-                <div className="w-full max-w-md space-y-4">
-                  <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="w-full max-w-md space-y-5">
+                  <div className="bg-gray-50 p-5 rounded-lg shadow-sm">
                     <Typography variant="h5" className="font-bold text-center mb-2">
                       {selectedUser.username}
                     </Typography>
@@ -189,28 +190,22 @@ const UserSearch = () => {
                       {selectedUser.email}
                     </Typography>
                   </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <Typography color="textSecondary" className="text-sm">
-                        Vai trò
-                      </Typography>
-                      <Typography className="font-medium">
-                        {selectedUser.role}
-                      </Typography>
-                    </div>
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <Typography color="textSecondary" className="text-sm">
+                  <div className="grid grid-cols-1 gap-4">
+                    <div className="bg-gray-50 p-5 rounded-lg text-center shadow-sm">
+                      <Typography color="textSecondary" className="text-sm mb-1">
                         Ngày tham gia
                       </Typography>
                       <Typography className="font-medium">
-                        {new Date(selectedUser.createdAt).toLocaleDateString()}
+                        {new Date(selectedUser.createdAt).toLocaleDateString('vi-VN', {
+                          day: '2-digit',
+                          month: '2-digit',
+                          year: 'numeric'
+                        })}
                       </Typography>
                     </div>
                   </div>
-
                   {selectedUser.bio && (
-                    <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="bg-gray-50 p-5 rounded-lg text-center shadow-sm">
                       <Typography color="textSecondary" className="text-sm mb-1">
                         Giới thiệu
                       </Typography>
@@ -221,8 +216,8 @@ const UserSearch = () => {
                   )}
 
                   {selectedUser.phone && (
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <Typography color="textSecondary" className="text-sm">
+                    <div className="bg-gray-50 p-5 rounded-lg text-center shadow-sm">
+                      <Typography color="textSecondary" className="text-sm mb-1">
                         Số điện thoại
                       </Typography>
                       <Typography className="font-medium">
@@ -237,7 +232,16 @@ const UserSearch = () => {
               <Button
                 onClick={handleCloseModal}
                 variant="outlined"
-                className="px-6"
+                className="px-6 py-2 mx-auto"
+                sx={{
+                  borderRadius: '9999px',
+                  borderColor: '#e0e0e0',
+                  color: '#666',
+                  '&:hover': {
+                    borderColor: '#999',
+                    backgroundColor: '#f5f5f5'
+                  }
+                }}
               >
                 Đóng
               </Button>

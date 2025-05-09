@@ -18,6 +18,7 @@ const RegisterForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isValidating, setIsValidating] = useState(false);
   const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   const [alert, setAlert] = useState({
     open: false,
@@ -29,6 +30,9 @@ const RegisterForm = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     if (e.target.name === "email") {
       setEmailError("");
+    }
+    if (e.target.name === "password") {
+      setPasswordError("");
     }
   };
 
@@ -45,12 +49,22 @@ const RegisterForm = () => {
     return emailRegex.test(email);
   };
 
+  const validatePasswordLength = (password: string) => {
+    return password.length >= 6;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Kiểm tra định dạng email cơ bản
     if (!validateEmailFormat(formData.email)) {
       setEmailError("Email không hợp lệ");
+      return;
+    }
+
+    // Kiểm tra độ dài mật khẩu
+    if (!validatePasswordLength(formData.password)) {
+      setPasswordError("Mật khẩu phải có ít nhất 6 ký tự");
       return;
     }
 
@@ -134,9 +148,14 @@ const RegisterForm = () => {
                   placeholder="Mật khẩu"
                   value={formData.password}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all bg-gray-50"
+                  className={`w-full px-4 py-3 rounded-xl border ${
+                    passwordError ? "border-red-500" : "border-gray-200"
+                  } focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all bg-gray-50`}
                   required
                 />
+                {passwordError && (
+                  <p className="mt-1 text-sm text-red-500">{passwordError}</p>
+                )}
                 <button
                   type="button"
                   onClick={togglePasswordVisibility}

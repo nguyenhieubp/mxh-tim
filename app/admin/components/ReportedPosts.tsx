@@ -22,7 +22,8 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions
+  DialogActions,
+  Avatar
 } from '@mui/material';
 import { ReportProblem, Visibility, Delete } from '@mui/icons-material';
 
@@ -235,7 +236,7 @@ const ReportedPosts = () => {
                 </Typography>
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2">
-                    <img
+                    <Avatar
                       src={`${process.env.NEXT_PUBLIC_API_URL}${selectedPost.reporter.profilePicture}`}
                       alt={selectedPost.reporter.username}
                       className="w-8 h-8 rounded-full object-cover"

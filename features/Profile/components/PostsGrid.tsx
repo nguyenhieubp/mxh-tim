@@ -303,7 +303,7 @@ const PostsGrid: React.FC<PostsGridProps> = ({ posts, onPostUpdate }) => {
       </div>
 
       {/* Settings Modal */}
-      <div className={`fixed inset-0 bg-black/50 backdrop-blur-sm z-50 transition-opacity duration-300 ${showSettingsModal ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+      <div className={`fixed inset-0 bg-black/50 backdrop-blur-sm z-50 transition-opacity duration-300 ${showSettingsModal ? 'opacity-100' : 'opacity-0 pointer-events-none'} overflow-y-auto`}>
         <div className="fixed inset-0 flex items-center justify-center p-4">
           <div className={`bg-white rounded-2xl shadow-2xl w-full max-w-4xl overflow-hidden transform transition-all duration-300 ${showSettingsModal ? 'scale-100' : 'scale-95'}`}>
             <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-5 flex justify-between items-center">
@@ -374,31 +374,9 @@ const PostsGrid: React.FC<PostsGridProps> = ({ posts, onPostUpdate }) => {
                     />
                     <div className="relative w-12 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                   </label>
-
-                  <label className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors duration-200">
-                    <div className="flex items-center gap-3">
-                      {isComment ? <CommentBank className="text-blue-500" /> : <CommentOutlined className="text-blue-500" />}
-                      <div>
-                        <span className="text-gray-700 font-medium block">
-                          {isComment ? t("post.settings.allowComments") : t("post.settings.disableComments")}
-                        </span>
-                        <span className="text-sm text-gray-500">
-                          {isComment ? t("post.settings.commentsDesc") : t("post.settings.noCommentsDesc")}
-                        </span>
-                      </div>
-                    </div>
-                    <input
-                      type="checkbox"
-                      checked={isComment}
-                      onChange={(e) => setIsComment(e.target.checked)}
-                      className="sr-only peer"
-                    />
-                    <div className="relative w-12 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                  </label>
                 </div>
               </div>
             </div>
-
             <div className="flex justify-between items-center p-5 bg-gray-50 border-t border-gray-200">
               <button
                 onClick={handleCloseSettings}

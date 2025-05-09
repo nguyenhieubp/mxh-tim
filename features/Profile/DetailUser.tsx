@@ -275,7 +275,42 @@ const UserProfilePage = ({ userId }: ProfilePageProps) => {
   }, []);
 
   const handlePostUpdate = () => {
-    refreshData();
+    setIsLoading(true);
+    
+    // Cập nhật cả hai tab công khai và riêng tư để đảm bảo bài viết được hiển thị đúng
+    if (isMe) {
+      // Cập nhật tab bài viết công khai
+      setPosts([]);
+      setPagePosts(1);
+      setHasMorePosts(true);
+      
+      // Cập nhật tab bài viết riêng tư
+      setPostPrivate([]);
+      setPagePrivate(1);
+      setHasMorePrivate(true);
+      
+      // Tải lại dữ liệu cho cả hai tab
+      Promise.all([
+        getPosts(1),
+        getPostPrivate(1)
+      ]).then(() => {
+        setIsLoading(false);
+        // Nếu đang ở tab công khai và chuyển bài viết sang riêng tư, chuyển sang tab riêng tư
+        if (value === 0 && posts.length === 0) {
+          setValue(1);
+        }
+        // Nếu đang ở tab riêng tư và chuyển bài viết sang công khai, chuyển sang tab công khai
+        else if (value === 1 && postPrivate.length === 0) {
+          setValue(0);
+        }
+      });
+    } else {
+      // Nếu không phải người dùng hiện tại, chỉ làm mới tab bài viết công khai
+      setPosts([]);
+      setPagePosts(1);
+      setHasMorePosts(true);
+      getPosts(1).then(() => setIsLoading(false));
+    }
   };
 
   return (

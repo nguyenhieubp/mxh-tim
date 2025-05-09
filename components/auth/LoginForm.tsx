@@ -41,11 +41,11 @@ const LoginForm = () => {
     try {
       // Đăng nhập
       await dispatch(login(formData)).unwrap();
-      
+
       // Lấy thông tin user hiện tại
       const userResult = await dispatch(getCurrentUser()).unwrap();
       const userData = userResult?.data;
-      
+
       // Kiểm tra role USER
       const hasUserRole = userData?.roles?.some(
         (role: string) => role.toLowerCase() === "user"
@@ -72,28 +72,12 @@ const LoginForm = () => {
         router.push("/");
       }, 1500);
     } catch (error: any) {
-      if (error?.response?.status === 401) {
-        setError("Email hoặc mật khẩu không đúng");
-        setAlert({
-          open: true,
-          message: "Email hoặc mật khẩu không đúng",
-          severity: "error",
-        });
-      } else if (error?.response?.status === 404) {
-        setError("Không tìm thấy email");
-        setAlert({
-          open: true,
-          message: "Không tìm thấy email",
-          severity: "error",
-        });
-      } else {
-        setError("Có lỗi xảy ra. Vui lòng thử lại.");
-        setAlert({
-          open: true,
-          message: "Có lỗi xảy ra. Vui lòng thử lại.",
-          severity: "error",
-        });
-      }
+      setError("Email hoặc mật khẩu không đúng");
+      setAlert({
+        open: true,
+        message: "Email hoặc mật khẩu không đúng",
+        severity: "error",
+      });
     }
   };
 
