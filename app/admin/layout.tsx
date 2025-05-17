@@ -2,12 +2,12 @@
 
 import { useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { 
-  Box, 
-  List, 
-  ListItem, 
-  ListItemButton, 
-  ListItemIcon, 
+import {
+  Box,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
   ListItemText,
   Drawer,
   AppBar,
@@ -17,12 +17,13 @@ import {
   Divider,
   Button
 } from '@mui/material';
-import { 
-  Dashboard, 
-  People, 
+import {
+  Dashboard,
+  People,
   ReportProblem,
   Menu as MenuIcon,
-  Logout
+  Logout,
+  Article
 } from '@mui/icons-material';
 import { AdminProvider, useAdmin } from "@/contexts/AdminContext";
 import LoginForm from './login/page';
@@ -36,7 +37,8 @@ const drawerWidth = 240;
 const menuItems = [
   { text: 'Thống kê', icon: <Dashboard />, path: '/admin' },
   { text: 'Quản lý người dùng', icon: <People />, path: '/admin/users' },
-  { text: 'Bài viết bị báo cáo', icon: <ReportProblem />, path: '/admin/reports' }
+  { text: 'Bài viết bị báo cáo', icon: <ReportProblem />, path: '/admin/reports' },
+  { text: 'Danh sách bài viết', icon: <Article />, path: '/admin/posts' }
 ];
 
 function AdminLayoutContent({ children }: { children: React.ReactNode }) {
@@ -128,8 +130,8 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
             {getCurrentTitle()}
           </Typography>
-          <Button 
-            color="inherit" 
+          <Button
+            color="inherit"
             startIcon={<Logout />}
             onClick={handleLogout}
           >

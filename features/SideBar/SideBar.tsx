@@ -34,7 +34,7 @@ const SideBar = ({ children }: SideBarProps) => {
           </div>
           <div className="px-3 py-4 border-t border-gray-200 bg-white/50 backdrop-blur-sm rounded-lg">
             <p className="text-gray-600 text-sm font-medium hover:text-indigo-600 transition-colors duration-300">
-              © 2024 Socialverse. All rights reserved.
+              © 2024 Socialverse created by nguyenhieu. All rights reserved.
             </p>
           </div>
         </div>
