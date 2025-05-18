@@ -269,7 +269,7 @@ const ProfileHeader = ({ user }: { user: IUser | undefined }) => {
         }}
       >
         <div className="relative bg-transparent p-4 rounded-xl max-w-[90vw] max-h-[90vh]">
-          <Image
+          <img
             width={800}
             height={800}
             alt={userData?.username || "avatarUser"}
@@ -279,7 +279,6 @@ const ProfileHeader = ({ user }: { user: IUser | undefined }) => {
                 : "/default-post-image.jpg"
             }
             className="rounded-lg object-contain max-h-[80vh] w-auto"
-            priority
           />
           <button
             onClick={() => setIsAvatarModalOpen(false)}

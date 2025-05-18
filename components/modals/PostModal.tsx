@@ -439,7 +439,7 @@ const PostModal: React.FC<PostModalProps> = ({
             <div className="w-[40rem] h-full relative flex items-center justify-center bg-gray-100">
               <div className="relative w-full h-full flex items-center justify-center">
                 <div className="relative w-full h-full flex items-center justify-center">
-                  <Image
+                  <img
                     width={1000}
                     height={1000}
                     className="w-auto h-auto max-w-full max-h-[90vh] object-contain rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl"

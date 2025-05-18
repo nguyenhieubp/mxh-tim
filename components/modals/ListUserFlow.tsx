@@ -97,14 +97,13 @@ const ListUserFlow = ({ open, onClose, title, type, userId }: ListUserFlowProps)
               className="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer"
             >
               <div className="relative h-12 w-12 rounded-full overflow-hidden">
-                <Image
+                <img
                   src={
                     user.profilePicture
                       ? `${process.env.NEXT_PUBLIC_API_URL}${user.profilePicture}`
                       : "/default-post-image.jpg"
                   }
                   alt={user.username}
-                  fill
                   className="object-cover"
                 />
               </div>

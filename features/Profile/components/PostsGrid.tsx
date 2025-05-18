@@ -288,13 +288,10 @@ const PostsGrid: React.FC<PostsGridProps> = ({ posts, onPostUpdate }) => {
               </div>
             </div>
             <div className="w-full h-full relative bg-gray-100">
-              <Image
+              <img
                 src={`${process.env.NEXT_PUBLIC_API_URL}${post.mediaUrls[0]}`}
                 alt={`Post by ${post.user?.username || "user"}`}
-                fill
-                sizes="(max-width: 768px) 33vw, (max-width: 1200px) 25vw, 20vw"
-                className="object-cover hover:scale-105 transition-transform duration-300"
-                quality={90}
+                className="object-cover hover:scale-105 transition-transform duration-300 w-full h-full"
                 loading="eager"
               />
             </div>
@@ -323,10 +320,9 @@ const PostsGrid: React.FC<PostsGridProps> = ({ posts, onPostUpdate }) => {
               {selectedPost && (
                 <div className="w-1/2 p-6 bg-gray-50 border-r border-gray-200">
                   <div className="aspect-square relative w-full rounded-xl overflow-hidden shadow-lg border border-gray-100 transition-all duration-300 hover:shadow-xl">
-                    <Image
+                    <img
                       src={`${process.env.NEXT_PUBLIC_API_URL}${selectedPost.mediaUrls[0]}`}
                       alt="Post preview"
-                      fill
                       className="object-cover"
                     />
                     <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/70 to-transparent backdrop-blur-sm text-white p-4 flex justify-center gap-8">
