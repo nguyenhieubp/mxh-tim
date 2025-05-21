@@ -1,6 +1,6 @@
 "use client";
 
-import { Dialog } from "@mui/material";
+import { Avatar, Dialog } from "@mui/material";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { IoSearchCircleOutline } from "react-icons/io5";
@@ -97,7 +97,7 @@ const ListUserFlow = ({ open, onClose, title, type, userId }: ListUserFlowProps)
               className="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer"
             >
               <div className="relative h-12 w-12 rounded-full overflow-hidden">
-                <img
+                <Avatar
                   src={
                     user.profilePicture
                       ? `${process.env.NEXT_PUBLIC_API_URL}${user.profilePicture}`

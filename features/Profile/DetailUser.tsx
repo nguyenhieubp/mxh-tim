@@ -46,7 +46,6 @@ const UserProfilePage = ({ userId }: ProfilePageProps) => {
   const [hasMoreSaved, setHasMoreSaved] = React.useState(true);
 
   const [isLoading, setIsLoading] = React.useState(false);
-  const [refreshKey, setRefreshKey] = React.useState(0); // Key to force refresh
   
   const firstRender = React.useRef(true);
   const userMe = useAppSelector(selectCurrentUser);
@@ -89,50 +88,6 @@ const UserProfilePage = ({ userId }: ProfilePageProps) => {
         getPosts(1);
       }
     }
-  };
-
-  const refreshData = () => {
-    setIsLoading(true);
-    setRefreshKey(prev => prev + 1);
-    
-    // Reset states
-    setPagePosts(1);
-    setPagePrivate(1);
-    setPageSaved(1);
-    setHasMorePosts(true);
-    setHasMorePrivate(true);
-    setHasMoreSaved(true);
-    
-    // Clear existing data
-    setPosts([]);
-    setPostPrivate([]);
-    setSavedPosts([]);
-    
-    // Refetch user profile and data
-    if (userId) {
-      profileUser(userId);
-    } else {
-      profileUser();
-    }
-    
-    // Fetch appropriate data based on current tab
-    if (isMe) {
-      switch (value) {
-        case 0:
-          getPostPrivate(1);
-          break;
-        case 1:
-          getPosts(1);
-          break;
-        case 2:
-          getSavedPosts(1);
-          break;
-      }
-    } else {
-      getPosts(1);
-    }
-    
-    setTimeout(() => setIsLoading(false), 800);
   };
 
   React.useEffect(() => {
@@ -179,12 +134,6 @@ const UserProfilePage = ({ userId }: ProfilePageProps) => {
     }
   }, [pageSaved]);
 
-  // Key for forcing refresh
-  React.useEffect(() => {
-    if (refreshKey > 0) {
-      // Data will be fetched when refreshKey changes
-    }
-  }, [refreshKey]);
 
   const profileUser = async (id?: string) => {
     try {
@@ -258,22 +207,6 @@ const UserProfilePage = ({ userId }: ProfilePageProps) => {
     }
   };
 
-  const refreshAllPosts = React.useCallback(async () => {
-    // Reset all states
-    setPosts([]);
-    setPostPrivate([]);
-    setPagePosts(1);
-    setPagePrivate(1);
-    setHasMorePosts(true);
-    setHasMorePrivate(true);
-
-    // Fetch first page of both types
-    await Promise.all([
-      getPosts(1),
-      getPostPrivate(1)
-    ]);
-  }, []);
-
   const handlePostUpdate = () => {
     setIsLoading(true);
     
@@ -288,11 +221,17 @@ const UserProfilePage = ({ userId }: ProfilePageProps) => {
       setPostPrivate([]);
       setPagePrivate(1);
       setHasMorePrivate(true);
+
+      // Cập nhật tab bài viết đã lưu
+      setSavedPosts([]);
+      setPageSaved(1);
+      setHasMoreSaved(true);
       
-      // Tải lại dữ liệu cho cả hai tab
+      // Tải lại dữ liệu cho tất cả các tab
       Promise.all([
         getPosts(1),
-        getPostPrivate(1)
+        getPostPrivate(1),
+        getSavedPosts(1)
       ]).then(() => {
         setIsLoading(false);
         // Nếu đang ở tab công khai và chuyển bài viết sang riêng tư, chuyển sang tab riêng tư
@@ -384,20 +323,6 @@ const UserProfilePage = ({ userId }: ProfilePageProps) => {
               <Tab label={t("profile.tabs.posts")} {...a11yProps(0)} />
             </Tabs>
           )}
-          
-          <Tooltip title="Làm mới">
-            <IconButton 
-              onClick={refreshData} 
-              disabled={isLoading}
-              sx={{ mr: 1 }}
-            >
-              {isLoading ? (
-                <CircularProgress size={24} />
-              ) : (
-                <Refresh color="primary" />
-              )}
-            </IconButton>
-          </Tooltip>
         </Box>
 
         {isMe ? (
