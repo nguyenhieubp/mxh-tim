@@ -7,37 +7,39 @@ import {  IPost } from "@/redux/features/post";
 import axios from "axios";
 
 export default function ListPost() {
-  const [localPosts, setLocalPosts] = useState<any[]>([]);
+  const [localPosts, setLocalPosts] = useState<IPost[]>([]);
   const [page, setPage] = useState(1);
   const [size] = useState(3);
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [totalElements, setTotalElements] = useState(0);
   const observer = useRef<IntersectionObserver | null>(null);
 
   const fetchPost = async (page: number, size: number) => {
     try {
+      if (isLoading) return; // Prevent multiple simultaneous requests
       setIsLoading(true);
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_SERVER}/post/all?page=${page}&size=${size}`
       );
-      const newPosts = response.data.data.content;
-
-      if (newPosts.length < size) {
-        setHasMore(false);
-      }
+      const { content, totalElements: total } = response.data.data;
+      
+      setTotalElements(total);
+      setHasMore(localPosts.length + content.length < total);
 
       setLocalPosts((prevPosts) => {
-        const startIndex = (page - 1) * size;
-        const updatedPosts = [...prevPosts];
-
-        newPosts.forEach((post: any, index: number) => {
-          updatedPosts[startIndex + index] = post;
-        });
-
-        return updatedPosts;
+        // Create a Set of existing post IDs for quick lookup
+        const existingPostIds = new Set(prevPosts.map(post => post.postId));
+        
+        // Filter out any posts that already exist
+        const uniqueNewPosts = content.filter((post: IPost) => !existingPostIds.has(post.postId));
+        
+        // Append only the new unique posts
+        return [...prevPosts, ...uniqueNewPosts];
       });
     } catch (error) {
       console.error("Error fetching posts:", error);
+      setHasMore(false);
     } finally {
       setIsLoading(false);
     }
@@ -45,15 +47,26 @@ export default function ListPost() {
 
   const lastPostRef = useCallback(
     (node: HTMLDivElement | null) => {
+      if (isLoading) return; // Don't observe if we're already loading
+      
       if (observer.current) observer.current.disconnect();
+      
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && hasMore && !isLoading) {
-          setPage((prev) => prev + 1);
+          if (localPosts.length < totalElements) {
+            setPage((prev) => prev + 1);
+          } else {
+            setHasMore(false);
+          }
         }
+      }, {
+        threshold: 0.5,
+        rootMargin: '100px'
       });
+      
       if (node) observer.current.observe(node);
     },
-    [hasMore, isLoading]
+    [hasMore, isLoading, localPosts.length, totalElements]
   );
 
   useEffect(() => {
@@ -64,10 +77,10 @@ export default function ListPost() {
     <main className="flex h-screen w-full">
       <SideBar>
         <div className="max-w-[800px] mx-auto">
-          {localPosts.map((post: IPost, index: number) => (
-            <div key={`${post.postId}-${index}`}>
+          {localPosts.map((post: IPost) => (
+            <div key={post.postId}>
               <Post post={post} />
-              {index === localPosts.length - 1 && (
+              {post === localPosts[localPosts.length - 1] && (
                 <div ref={lastPostRef} className="text-center p-4">
                   {isLoading ? (
                     <span>Loading more posts...</span>
