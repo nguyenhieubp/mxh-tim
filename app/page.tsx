@@ -1,12 +1,11 @@
-"use client";
+import type { Metadata } from 'next'
+import HomePage from './HomePage';
 
-import React from "react";
-import ListPost from "@/features/Post/ListPost";
+export const metadata: Metadata = {
+  title: 'Trang chủ',
+  description: 'Trang chủ của mạng xã hội - Nơi kết nối và chia sẻ',
+}
 
 export default function Home() {
-  return (
-    <main className="flex h-screen">
-      <ListPost></ListPost>
-    </main>
-  );
+  return <HomePage />;
 }

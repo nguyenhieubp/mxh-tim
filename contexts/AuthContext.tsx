@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
 
         // Nếu không có token và không phải trang auth (login/register)
-        if (!token && pathname !== '/login' && pathname !== '/register' && pathname !== '/forgot-password') {
+        if (!token && pathname !== '/login' && pathname !== '/register' && pathname !== '/forgot-password' && pathname !== '/reset-password') {
           setIsLoading(false);
           router.replace("/login");
           return;
@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           if (!userData) {
             localStorage.removeItem("token");
             setIsLoading(false);
-            if (pathname !== '/login' && pathname !== '/register' && pathname !== '/forgot-password') {
+            if (pathname !== '/login' && pathname !== '/register' && pathname !== '/forgot-password' && pathname !== '/reset-password') {
               router.replace("/login");
             }
             return;

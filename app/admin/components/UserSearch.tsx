@@ -51,7 +51,11 @@ const UserSearch = () => {
       const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER}/user/all?name=${query}`);
       const result = await response.json();
       if (result.status === 200 && result.data && result.data.content) {
-        setUsers(result.data.content);
+        // Lọc bỏ user có tên là Admin
+        const filteredUsers = result.data.content.filter((user: User) => 
+          user.username.toLowerCase() !== 'admin'
+        );
+        setUsers(filteredUsers);
       } else {
         setUsers([]);
       }
