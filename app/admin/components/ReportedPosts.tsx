@@ -209,7 +209,7 @@ const ReportedPosts = () => {
                 </Typography>
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2">
-                    <img
+                    <Avatar 
                       src={`${process.env.NEXT_PUBLIC_API_URL}${selectedPost.post.user.profilePicture}`}
                       alt={selectedPost.post.user.username}
                       className="w-8 h-8 rounded-full object-cover"

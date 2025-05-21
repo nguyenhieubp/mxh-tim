@@ -71,13 +71,13 @@ const RegisterForm = () => {
     try {
       setIsValidating(true);
       // Kiểm tra email thực
-      
-      // const isValid = await validateEmail(formData.email);
-      // if (!isValid) {
-      //   setEmailError("Email không tồn tại hoặc không hợp lệ");
-      //   setIsValidating(false);
-      //   return;
-      // }
+      //open
+      const isValid = await validateEmail(formData.email);
+      if (!isValid) {
+        setEmailError("Email không tồn tại hoặc không hợp lệ");
+        setIsValidating(false);
+        return;
+      }
 
       await dispatch(register(formData)).unwrap();
       setAlert({
